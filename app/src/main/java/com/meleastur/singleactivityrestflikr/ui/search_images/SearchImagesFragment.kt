@@ -1,6 +1,8 @@
 package com.meleastur.singleactivityrestflikr.ui.search_images
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -21,6 +23,7 @@ import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
+import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
@@ -33,6 +36,8 @@ import javax.inject.Inject
 open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     SearchImagesAdapter.onItemClickListener,
     SearchView.OnQueryTextListener {
+
+    private var listener: Interactor? = null
 
     @Inject
     lateinit var presenter: SearchImagesContract.Presenter
@@ -94,6 +99,12 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
         presenter.attach(this)
         presenter.subscribe()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        listener = context as Interactor
     }
 
     override fun onDestroyView() {
@@ -164,10 +175,11 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         }
 
         showProgress(false)
+
         if (!TextUtils.isEmpty(textSelected)) {
-            (activity as MainActivity).changeTitleSearch(textSelected!!)
+            listener?.onChangeTitleSearch(textSelected!!)
         } else {
-            (activity as MainActivity).changeTitleSearch(getString(R.string.search_image_frag_title))
+            listener?.onChangeTitleSearch(getString(R.string.search_image_frag_title))
         }
     }
 
@@ -176,8 +188,8 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // ==============================
     // region  SearchImagesAdapter.onItemClickListener
     // ==============================
-    override fun itemDetail(searchImage: SearchImage) {
-        (activity as MainActivity).presenter.showDetailImageFragment(searchImage)
+    override fun itemDetail(searchImage: SearchImage, transactionName: String) {
+        listener?.onShowDetailImageFragment(searchImage, transactionName)
     }
 
     override fun itemPositionChange(page: Int, perPage: Int, position: Int) {
@@ -188,7 +200,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         if (!isLoading) {
             showProgress(true)
             actualPage += 1
-            presenter.searchImageByText(textSelected!!, actualPage)
+            presenter.searchImageByText(textSelected!!, actualPage, isWiFiConnected())
         }
 
     }
@@ -249,7 +261,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             isLoading = true
             actualPerPage = 0
             actualPage = 0
-            presenter.searchImageByText(textSelected!!)
+            presenter.searchImageByText(textSelected!!, isWiFiConnected())
 
             return true
         }
@@ -283,6 +295,28 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             getString(
                 R.string.search_image_elements, position.toString(), actualPerPage.toString()
             )
+    }
+
+    fun isWiFiConnected(): Boolean {
+        val connectivityManager =
+            activity!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork
+            val capabilities = connectivityManager.getNetworkCapabilities(network)
+            capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        } else {
+            connectivityManager.activeNetworkInfo.type == ConnectivityManager.TYPE_WIFI
+        }
+    }
+    // endregion
+
+    //==============================
+    // region Inteactor
+    // ==============================
+    interface Interactor {
+        fun onShowDetailImageFragment(searchImage: SearchImage, transactionName: String)
+
+        fun onChangeTitleSearch(text: String)
     }
     // endregion
 }

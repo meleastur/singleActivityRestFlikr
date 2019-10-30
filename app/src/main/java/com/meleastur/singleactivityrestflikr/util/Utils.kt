@@ -28,7 +28,7 @@ open class Utils {
             bmp!!.compress(Bitmap.CompressFormat.PNG, 90, out)
             out.close()
             bmpUri = FileProvider.getUriForFile(
-                activity!!.applicationContext,
+                activity.applicationContext,
                 "com.meleastur.singleactivityrestflikr.provider", file
             )
         } catch (e: IOException) {

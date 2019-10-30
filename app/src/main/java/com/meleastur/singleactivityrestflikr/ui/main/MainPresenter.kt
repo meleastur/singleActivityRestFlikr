@@ -19,7 +19,7 @@ class MainPresenter: MainContract.Presenter {
         view.showSearchImagesFragment()
     }
 
-    override fun showDetailImageFragment(searchImage: SearchImage) {
-        view.showDetailImageFragment(searchImage)
+    override fun showDetailImageFragment(searchImage: SearchImage, transactionName: String) {
+        view.showDetailImageFragment(searchImage, transactionName)
     }
 }

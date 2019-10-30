@@ -7,10 +7,10 @@ class MainContract {
 
     interface View: BaseContract.View {
         fun showSearchImagesFragment()
-        fun showDetailImageFragment(searchImage: SearchImage)
+        fun showDetailImageFragment(searchImage: SearchImage, transactionName:String)
     }
 
     interface Presenter: BaseContract.Presenter<MainContract.View>{
-        fun showDetailImageFragment(searchImage: SearchImage)
+        fun showDetailImageFragment(searchImage: SearchImage, transactionName:String)
     }
 }

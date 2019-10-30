@@ -1,5 +1,7 @@
 package com.meleastur.singleactivityrestflikr.ui.main
 
+import android.content.pm.ActivityInfo
+import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.meleastur.singleactivityrestflikr.R
@@ -17,10 +19,14 @@ import org.androidannotations.annotations.ViewById
 import javax.inject.Inject
 
 @EActivity(R.layout.activity_main)
-open class MainActivity : AppCompatActivity(), MainContract.View {
+open class MainActivity : AppCompatActivity(), MainContract.View,
+    SearchImagesFragment.Interactor,
+    DetailImageFragment.Interactor{
 
     @Inject
     lateinit var presenter: MainContract.Presenter
+
+    private var lastSearchTitle = ""
 
     // ==============================
     // region Views
@@ -40,19 +46,16 @@ open class MainActivity : AppCompatActivity(), MainContract.View {
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-            supportActionBar!!.title = getString(R.string.search_image_frag_title)
+            if (TextUtils.isEmpty(lastSearchTitle)) {
+                supportActionBar!!.title = getString(R.string.search_image_frag_title)
+            } else {
+                supportActionBar!!.title = lastSearchTitle
+            }
         }
 
         injectDependency()
         presenter.attach(this)
     }
-
-    fun changeTitleSearch(text: String){
-        if (supportActionBar != null) {
-            supportActionBar!!.title = text
-        }
-    }
-
     // Para el atrás del DetailImageFragment
 
     @OptionsItem(android.R.id.home)
@@ -66,7 +69,11 @@ open class MainActivity : AppCompatActivity(), MainContract.View {
         if (detailFragment != null) {
             if (supportActionBar != null) {
                 supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-                supportActionBar!!.title = getString(R.string.search_image_frag_title)
+                if (TextUtils.isEmpty(lastSearchTitle)) {
+                    supportActionBar!!.title = getString(R.string.search_image_frag_title)
+                } else {
+                    supportActionBar!!.title = lastSearchTitle
+                }
             }
 
             var searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
@@ -101,11 +108,14 @@ open class MainActivity : AppCompatActivity(), MainContract.View {
     // ==============================
     // region MainContract.View
     // ==============================
-    @AfterViews
     override fun showSearchImagesFragment() {
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-            supportActionBar!!.title = getString(R.string.search_image_frag_title)
+            if (TextUtils.isEmpty(lastSearchTitle)) {
+                supportActionBar!!.title = getString(R.string.search_image_frag_title)
+            } else {
+                supportActionBar!!.title = lastSearchTitle
+            }
         }
 
         supportFragmentManager.beginTransaction()
@@ -114,7 +124,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View {
             .commit()
     }
 
-    override fun showDetailImageFragment(searchImage: SearchImage) {
+    override fun showDetailImageFragment(searchImage: SearchImage, transactionName: String) {
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.title = getString(R.string.detail_image_title)
@@ -125,10 +135,35 @@ open class MainActivity : AppCompatActivity(), MainContract.View {
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
             .hide(searchFragment!!)
-            .add(R.id.frameLayout, DetailImageFragment().newInstance(searchImage), DETAIL_IMAGE)
+            .add(R.id.frameLayout, DetailImageFragment().newInstance(searchImage, transactionName), DETAIL_IMAGE)
             .commit()
     }
 
     // endregion
 
+    // ==============================
+    // region SearchImagesFragment.Interactor
+    // ==============================
+    override fun onShowDetailImageFragment(searchImage: SearchImage, transactionName: String) {
+        showDetailImageFragment(searchImage, transactionName)
+    }
+
+    override fun onChangeTitleSearch(text: String) {
+        if (supportActionBar != null) {
+            lastSearchTitle = text
+            supportActionBar!!.title = text
+        }
+    }
+
+    // ==============================
+    // region DetailFragment.Interactor
+    // ==============================
+
+    override fun onRequestOrientation(isToPortrait: Boolean) {
+        if (isToPortrait) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        } else {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        }
+    }
 }

@@ -7,6 +7,9 @@ import android.os.Parcelable
 open class SearchImage() : Parcelable {
     var id: String = ""
     var thumbnailURL: String = ""
+    var fullImageURL: String = ""
+    var thumbnailURLLow: String = ""
+    var fullImageURLLow: String = ""
     var title: String = ""
     var author: String = ""
     var date: String = ""
@@ -17,6 +20,9 @@ open class SearchImage() : Parcelable {
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()!!
         thumbnailURL = parcel.readString()!!
+        fullImageURL = parcel.readString()!!
+        thumbnailURLLow = parcel.readString()!!
+        fullImageURLLow = parcel.readString()!!
         title = parcel.readString()!!
         author = parcel.readString()!!
         date = parcel.readString()!!
@@ -28,6 +34,9 @@ open class SearchImage() : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(thumbnailURL)
+        parcel.writeString(fullImageURL)
+        parcel.writeString(thumbnailURLLow)
+        parcel.writeString(fullImageURLLow)
         parcel.writeString(title)
         parcel.writeString(author)
         parcel.writeString(date)

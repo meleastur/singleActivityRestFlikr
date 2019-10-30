@@ -15,7 +15,6 @@
         android:id="@+id/item_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
         android:background="?attr/selectableItemBackgroundBorderless">
 
         <ImageView
@@ -26,7 +25,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:foregroundGravity="top"
-            android:src="@drawable/ic_photo" />
+            app:srcCompat="@drawable/ic_photo" />
 
         <TextView
             android:id="@+id/image_title_title"

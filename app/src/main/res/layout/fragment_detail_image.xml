@@ -13,48 +13,47 @@
         android:animateLayoutChanges="true"
         android:background="@color/gray_light">
 
-        <ImageView
-            android:id="@+id/image_thumbnail"
+        <RelativeLayout
+            android:id="@+id/image_thumbnail_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:maxHeight="400dp"
-            app:srcCompat="@drawable/ic_photo" />
+            android:animateLayoutChanges="true">
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab_share"
-            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/image_thumbnail"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/large"
-            android:layout_marginBottom="-24dp"
-            android:text="@string/share_button"
-            android:textAllCaps="false"
-            android:textSize="@dimen/text_small"
-            android:textColor="@color/colorPrimary"
-            app:backgroundTint="@color/colorAccent"
-            app:rippleColor="@color/colorAccent_unfocused"
-            app:iconTint="@color/colorPrimary"
-            app:icon="@drawable/ic_share"
-            tools:ignore="RelativeOverlap" />
+            <ImageView
+                android:id="@+id/image_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:maxHeight="400dp"
+                app:srcCompat="@drawable/ic_photo" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_progress_circle"
+                android:indeterminate="true"
+                android:padding="@dimen/medium"
+                android:theme="@style/MyProgressBar"
+                android:visibility="visible" />
+        </RelativeLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/item_card_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/image_thumbnail"
+            android:layout_below="@id/image_thumbnail_parent"
             android:layout_marginStart="@dimen/x_medium"
             android:layout_marginTop="@dimen/medium"
             android:layout_marginEnd="@dimen/x_medium"
             android:layout_marginBottom="@dimen/medium"
             android:padding="@dimen/medium"
-            app:elevation="@dimen/medium">
+            app:elevation="0dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -164,6 +163,28 @@
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_share"
+            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image_thumbnail_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/large"
+            android:layout_marginBottom="-24dp"
+            android:animateLayoutChanges="true"
+            android:text="@string/share_button"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_small"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorAccent"
+            app:icon="@drawable/ic_share"
+            app:iconTint="@color/colorPrimary"
+            app:rippleColor="@color/colorAccent_unfocused"
+            tools:ignore="RelativeOverlap" />
+
 
     </RelativeLayout>
 

@@ -23,8 +23,6 @@ import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
-import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
 import org.androidannotations.annotations.OptionsMenu
@@ -200,7 +198,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         if (!isLoading) {
             showProgress(true)
             actualPage += 1
-            presenter.searchImageByText(textSelected!!, actualPage, isWiFiConnected())
+            presenter.searchImageByText(textSelected!!, actualPage, isWiFiConected())
         }
 
     }
@@ -261,7 +259,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             isLoading = true
             actualPerPage = 0
             actualPage = 0
-            presenter.searchImageByText(textSelected!!, isWiFiConnected())
+            presenter.searchImageByText(textSelected!!, isWiFiConected())
 
             return true
         }
@@ -297,7 +295,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             )
     }
 
-    fun isWiFiConnected(): Boolean {
+    fun isWiFiConected(): Boolean {
         val connectivityManager =
             activity!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -305,7 +303,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             val capabilities = connectivityManager.getNetworkCapabilities(network)
             capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
         } else {
-            connectivityManager.activeNetworkInfo.type == ConnectivityManager.TYPE_WIFI
+            connectivityManager.activeNetworkInfo?.type == ConnectivityManager.TYPE_WIFI
         }
     }
     // endregion

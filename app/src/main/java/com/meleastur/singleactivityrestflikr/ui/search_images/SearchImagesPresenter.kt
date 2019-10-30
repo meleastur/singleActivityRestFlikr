@@ -51,8 +51,8 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                 parseIdToGetPhotoInfo(imageResponse!!, false)
             }, { error ->
                 view.showProgress(false)
-                view.showEmptyDataError(error.localizedMessage)
-                view.showErrorMessage(error.localizedMessage)
+                view.showEmptyDataError(error.localizedMessage!!)
+                view.showErrorMessage(error.localizedMessage!!)
             })
 
         subscriptions.add(subscribe)
@@ -67,8 +67,8 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                 parseIdToGetPhotoInfo(imageResponse!!, true)
             }, { error ->
                 view.showProgress(false)
-                view.showEmptyDataError(error.localizedMessage)
-                view.showErrorMessage(error.localizedMessage)
+                view.showEmptyDataError(error.localizedMessage!!)
+                view.showErrorMessage(error.localizedMessage!!)
             })
 
         subscriptions.add(subscribe)
@@ -111,8 +111,8 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                 }
             }, { error ->
                 view.showProgress(false)
-                view.showEmptyDataError(error.localizedMessage)
-                view.showErrorMessage(error.localizedMessage)
+                view.showEmptyDataError(error.localizedMessage!!)
+                view.showErrorMessage(error.localizedMessage!!)
             })
 
         subscriptions.add(subscribe)
@@ -169,7 +169,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                             } catch (e: Exception) {
                                 Log.e(
                                     "parseToThumbnail",
-                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage.toString()
+                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage
                                 )
                                 return ""
                             }
@@ -195,7 +195,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                             } catch (e: Exception) {
                                 Log.e(
                                     "parseToThumbnail",
-                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage.toString()
+                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage
                                 )
                                 return ""
                             }
@@ -228,7 +228,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                             } catch (e: Exception) {
                                 Log.e(
                                     "parseToFullImage",
-                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage.toString()
+                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage
                                 )
                                 return ""
                             }
@@ -254,7 +254,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                             } catch (e: Exception) {
                                 Log.e(
                                     "parseToFullImage",
-                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage.toString()
+                                    "SearchImagePresenter - parseo antes de getPhotoInfo : " + e.localizedMessage
                                 )
                                 return ""
                             }

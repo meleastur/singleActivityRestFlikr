@@ -90,8 +90,8 @@ class SearchImagesAdapter(
 
     fun showSnackRestartGlide(imageView: ImageView, urlGlide: URL) {
         Snackbar
-            .make(imageView, "Reintentar descarga", Snackbar.LENGTH_LONG)
-            .setAction("UNDO") {
+            .make(imageView, "Error en la descarga", Snackbar.LENGTH_LONG)
+            .setAction("Reintentar") {
                 Glide.with(fragment)
                     .load(urlGlide)
                     .placeholder(R.drawable.ic_photo)

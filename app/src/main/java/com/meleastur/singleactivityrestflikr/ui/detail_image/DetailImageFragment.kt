@@ -4,42 +4,32 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
 import com.meleastur.singleactivityrestflikr.util.Constants
 import com.meleastur.singleactivityrestflikr.util.GenericCallback
 import com.meleastur.singleactivityrestflikr.util.PermisionHelper
 import com.meleastur.singleactivityrestflikr.util.Utils
 import com.stfalcon.imageviewer.StfalconImageViewer
-import com.stfalcon.imageviewer.listeners.OnDismissListener
 import org.androidannotations.annotations.*
 import java.net.URL
 import javax.inject.Inject
@@ -154,7 +144,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .load(urlImage)
             .transition(withCrossFade())
             .placeholder(R.drawable.ic_photo)
-            .apply {Constants.optionsGlide}
+            .override(1920,1080)
+            .apply { Constants.optionsGlide }
             .centerInside()
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(
@@ -226,6 +217,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     @Click(R.id.fab_share)
     fun clickShareButton() {
+        showProgress(true)
+
         askWriteStorage()
     }
 
@@ -262,6 +255,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(Constants.optionsGlide)
                 .centerInside()
+                .override(1920,1080)
                 .into(imageView)
         }
     }
@@ -279,6 +273,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             }
 
             override fun onError(error: String?) {
+                showProgress(false)
+
                 Toast.makeText(
                     activity, R.string.share_image_error, Toast.LENGTH_SHORT
                 ).show()
@@ -287,30 +283,35 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     }
 
     // Intent Compartir
-    private fun shareURLImage() {
+    @Background
+    open fun shareURLImage() {
         val bmpUri = utils.getLocalBitmapUri(activity!!, bitmap)
         if (bmpUri != null) {
-            val shareIntent = Intent()
-            shareIntent.action = Intent.ACTION_SEND
-            shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
-            shareIntent.type = "image/*"
-
-            startActivity(Intent.createChooser(shareIntent, "Compartir con"))
-        } else {
-            Toast.makeText(
-                activity, R.string.share_image_error, Toast.LENGTH_SHORT
-            ).show()
+            openShateActivity(bmpUri)
         }
+    }
+
+    @UiThread
+    open fun openShateActivity(bmpUri: Uri) {
+        showProgress(false)
+
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
+        shareIntent.type = "image/*"
+
+        startActivity(Intent.createChooser(shareIntent, "Compartir con"))
     }
 
     private fun showSnackRestartGlide(imageView: ImageView, urlGlide: URL) {
         Snackbar
-            .make(imageView, "Reintentar descarga", Snackbar.LENGTH_LONG)
-            .setAction("UNDO") {
+            .make(imageView, "Error en la descarga", Snackbar.LENGTH_LONG)
+            .setAction("Reintentar") {
                 Glide.with(this)
                     .load(urlGlide)
+                    .override(1920,1080)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply {Constants.optionsGlide}
+                    .apply { Constants.optionsGlide }
                     .into(imageView)
             }.show()
     }

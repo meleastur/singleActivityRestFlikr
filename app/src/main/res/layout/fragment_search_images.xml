@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/gray_light">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_light"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/item_search_images" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_pagination"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/medium"
+        android:layout_marginEnd="@dimen/x_medium"
+        android:text="@string/search_image_pagination"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_small"
+        android:clickable="false"
+        android:visibility="gone"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/colorAccent"
+        android:textColor="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorAccent_unfocused"
+        tools:ignore="RelativeOverlap" />
+
+    <RelativeLayout
+        android:id="@+id/empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/gray_light"
+        android:padding="@dimen/large">
+
+        <ImageView
+            android:id="@+id/image_error"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/ic_search"
+            android:tint="@color/gray_medium" />
+
+        <TextView
+            android:id="@+id/text_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_error"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/large"
+            android:text="@string/error_default"
+            android:textSize="@dimen/text_large" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/empty_state"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_progress_circle"
+        android:indeterminate="true"
+        android:padding="@dimen/medium"
+        android:theme="@style/MyProgressBar"
+        android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_elements"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/medium"
+        android:layout_marginEnd="@dimen/x_medium"
+        android:text="@string/search_image_elements"
+        android:textAllCaps="false"
+        android:layout_marginBottom="@dimen/large"
+        android:textSize="@dimen/text_small"
+        android:clickable="false"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/colorAccent"
+        android:visibility="gone"
+        android:textColor="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorAccent_unfocused"
+        tools:ignore="RelativeOverlap" />
+
+</RelativeLayout>

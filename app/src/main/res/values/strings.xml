@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">SingleActivity</string>
+
+    <!--DSearchImagesFragment-->
+    <string name="search_image_frag_title">Búsqueda de imágenes</string>
+
+    <!--SearchImages Errores-->
+    <string name="error_default">Usa la lupa para buscar imágenes por un texto relacionado.</string>
+
+    <!--SearchImages item-->
+    <string name="search_image_autor">Autor</string>
+    <string name="search_image_title">Titúlo</string>
+
+    <!--Menu-->
+    <string name="menu_search">Buscar</string>
+
+    <!--DetailImageFragment-->
+    <string name="detail_image_title">Detalle</string>
+    <string name="detail_image_date">Fecha</string>
+    <string name="detail_image_description">Descripción</string>
+    <string name="search_image_pagination">Página %1$s</string>
+    <string name="search_image_pagination2">Pág %1$s/%2$s</string>
+    <string name="search_image_elements">Imágen %1$s/%2$s</string>
+    <string name="share_button">Compartir</string>
+
+    <!--ShareImage Errores-->
+    <string name="share_image_error"> Ha ocurrido un error, por favor inténtalo de nuevo más tarde</string>
+
+</resources>

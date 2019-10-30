@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/gray_light">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@color/gray_light">
+
+        <ImageView
+            android:id="@+id/image_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
+            android:maxHeight="400dp"
+            app:srcCompat="@drawable/ic_photo" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_share"
+            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image_thumbnail"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/large"
+            android:layout_marginBottom="-24dp"
+            android:text="@string/share_button"
+            android:textAllCaps="false"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/colorPrimary"
+            app:backgroundTint="@color/colorAccent"
+            app:rippleColor="@color/colorAccent_unfocused"
+            app:iconTint="@color/colorPrimary"
+            app:icon="@drawable/ic_share"
+            tools:ignore="RelativeOverlap" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item_card_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/image_thumbnail"
+            android:layout_marginStart="@dimen/x_medium"
+            android:layout_marginTop="@dimen/medium"
+            android:layout_marginEnd="@dimen/x_medium"
+            android:layout_marginBottom="@dimen/medium"
+            android:padding="@dimen/medium"
+            app:elevation="@dimen/medium">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/image_title_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/large"
+                    android:layout_marginTop="@dimen/large"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/search_image_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/gray_medium"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_title_title"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginEnd="@dimen/large"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_author_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_title"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/medium"
+                    android:layout_marginEnd="@dimen/large"
+                    android:text="@string/search_image_autor"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/gray_medium"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_author_title"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginEnd="@dimen/large"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_date_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_author"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/medium"
+                    android:layout_marginEnd="@dimen/large"
+                    android:ellipsize="end"
+                    android:text="@string/detail_image_date"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/gray_medium"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_date_title"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginEnd="@dimen/large"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_description_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_date"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/medium"
+                    android:layout_marginEnd="@dimen/large"
+                    android:text="@string/detail_image_description"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/gray_medium"
+                    android:textSize="@dimen/text_medium" />
+
+                <TextView
+                    android:id="@+id/image_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_description_title"
+                    android:layout_alignStart="@+id/image_title_title"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginEnd="@dimen/large"
+                    android:layout_marginBottom="@dimen/medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_medium" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</ScrollView>

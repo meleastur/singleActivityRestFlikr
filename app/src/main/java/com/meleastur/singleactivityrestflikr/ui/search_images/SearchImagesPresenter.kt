@@ -1,8 +1,5 @@
 package com.meleastur.singleactivityrestflikr.ui.search_images
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.text.TextUtils
 import android.util.Log
 import com.meleastur.singleactivityrestflikr.api.ApiFlikrServiceInterface
@@ -14,8 +11,6 @@ import com.meleastur.singleactivityrestflikr.util.Constants.Companion.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.androidannotations.annotations.EBean
-import org.androidannotations.annotations.RootContext
 
 open class SearchImagesPresenter : SearchImagesContract.Presenter {
 

@@ -17,6 +17,7 @@
             android:layout_height="?android:attr/actionBarSize"
             app:layout_collapseMode="pin"
             app:theme="@style/MyToolbar" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout

@@ -1,16 +1,20 @@
 package com.meleastur.singleactivityrestflikr.ui.main
 
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.text.TextUtils
+import android.transition.Fade
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerActivityComponent
 import com.meleastur.singleactivityrestflikr.di.module.MainActivityModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
+import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailsTransition
 import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
-import com.meleastur.singleactivityrestflikr.util.Constants.Companion.DETAIL_IMAGE
 import com.meleastur.singleactivityrestflikr.util.Constants.Companion.SEARCH_IMAGES
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EActivity
@@ -18,19 +22,23 @@ import org.androidannotations.annotations.OptionsItem
 import org.androidannotations.annotations.ViewById
 import javax.inject.Inject
 
-@EActivity(R.layout.activity_main)
+
+@EActivity(com.meleastur.singleactivityrestflikr.R.layout.activity_main)
 open class MainActivity : AppCompatActivity(), MainContract.View,
-    SearchImagesFragment.Interactor,
-    DetailImageFragment.Interactor{
+    SearchImagesFragment.SearchImagesInterector,
+    DetailImageFragment.DetailImageFragmentInteractor {
 
     @Inject
     lateinit var presenter: MainContract.Presenter
 
     private var lastSearchTitle = ""
+    private var savedSearchImages: ArrayList<SearchImage>? = null
 
     // ==============================
     // region Views
     // ==============================
+
+    var searchImagesFragmentSaved: Fragment? = null
 
     @ViewById(R.id.toolbar)
     protected lateinit var toolbar: Toolbar
@@ -40,14 +48,14 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // ==============================
     // region Activity
     // ==============================
-
     @AfterViews
     protected fun afterViews() {
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
             if (TextUtils.isEmpty(lastSearchTitle)) {
-                supportActionBar!!.title = getString(R.string.search_image_frag_title)
+                supportActionBar!!.title =
+                    getString(com.meleastur.singleactivityrestflikr.R.string.search_image_frag_title)
             } else {
                 supportActionBar!!.title = lastSearchTitle
             }
@@ -64,9 +72,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     }
 
     override fun onBackPressed() {
-        var detailFragment = supportFragmentManager.findFragmentByTag(DETAIL_IMAGE)
+        val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
 
-        if (detailFragment != null) {
+        if (searchFragment != null) {
             if (supportActionBar != null) {
                 supportActionBar!!.setDisplayHomeAsUpEnabled(false)
                 if (TextUtils.isEmpty(lastSearchTitle)) {
@@ -76,18 +84,14 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 }
             }
 
-            var searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
-
             supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-                .remove(detailFragment)
-                .show(searchFragment!!)
+                .setReorderingAllowed(true)
+                .replace(R.id.frameLayout, searchFragment)
                 .commit()
 
         } else {
             super.onBackPressed()
         }
-
     }
     // endregion
 
@@ -112,7 +116,8 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
             if (TextUtils.isEmpty(lastSearchTitle)) {
-                supportActionBar!!.title = getString(R.string.search_image_frag_title)
+                supportActionBar!!.title =
+                    getString(com.meleastur.singleactivityrestflikr.R.string.search_image_frag_title)
             } else {
                 supportActionBar!!.title = lastSearchTitle
             }
@@ -120,32 +125,58 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right)
-            .replace(R.id.frameLayout, SearchImagesFragment().newInstance(), SEARCH_IMAGES)
+            .setReorderingAllowed(true)
+            .replace(
+                R.id.frameLayout,
+                SearchImagesFragment().newInstance(),
+                SEARCH_IMAGES
+            )
             .commit()
     }
 
-    override fun showDetailImageFragment(searchImage: SearchImage, transactionName: String) {
+    override fun showDetailImageFragment(
+        searchImage: SearchImage, imageView: ImageView
+    ) {
+
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.title = getString(R.string.detail_image_title)
+            supportActionBar!!.title =
+                getString(com.meleastur.singleactivityrestflikr.R.string.detail_image_title)
         }
 
-        var searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
+        val detailImageFragment = DetailImageFragment().newInstance(searchImage)
 
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-            .hide(searchFragment!!)
-            .add(R.id.frameLayout, DetailImageFragment().newInstance(searchImage, transactionName), DETAIL_IMAGE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            detailImageFragment.sharedElementEnterTransition = DetailsTransition()
+            detailImageFragment.enterTransition = Fade()
+            detailImageFragment.exitTransition = Fade()
+            detailImageFragment.sharedElementReturnTransition = DetailsTransition()
+        }
+
+        //val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
+
+        supportFragmentManager
+            .beginTransaction()
+            .setReorderingAllowed(true)
+            .addSharedElement(imageView, "thumbnailImage")
+            .add(R.id.frameLayout, detailImageFragment)
+            .addToBackStack(null)
             .commit()
     }
 
     // endregion
 
     // ==============================
-    // region SearchImagesFragment.Interactor
+    // region SearchImagesFragment.DetailImageFragmentInteractor
     // ==============================
-    override fun onShowDetailImageFragment(searchImage: SearchImage, transactionName: String) {
-        showDetailImageFragment(searchImage, transactionName)
+    override fun onUpdateSavedSearchImage(savedSearchImages: ArrayList<SearchImage>) {
+        this.savedSearchImages = savedSearchImages
+    }
+
+    override fun onShowDetailImageFragment(
+        searchImage: SearchImage, imageView: ImageView
+    ) {
+        showDetailImageFragment(searchImage, imageView)
     }
 
     override fun onChangeTitleSearch(text: String) {
@@ -155,15 +186,19 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
+    // endregion
+
     // ==============================
-    // region DetailFragment.Interactor
+    // region DetailFragment.DetailImageFragmentInteractor
     // ==============================
 
     override fun onRequestOrientation(isToPortrait: Boolean) {
-        if (isToPortrait) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = if (isToPortrait) {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+            ActivityInfo.SCREEN_ORIENTATION_USER
         }
     }
+
+    // endregion
 }

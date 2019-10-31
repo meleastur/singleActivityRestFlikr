@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 const val URLS = "url_l, url_m, url_n, url_z, url_o"
-const val PER_PAGE = 50
+const val PER_PAGE = 100
 
 interface ApiFlikrServiceInterface {
 

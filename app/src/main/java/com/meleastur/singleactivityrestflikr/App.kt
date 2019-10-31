@@ -4,7 +4,7 @@ import android.app.Application
 import com.meleastur.singleactivityrestflikr.di.component.ApplicationComponent
 import com.meleastur.singleactivityrestflikr.di.component.DaggerApplicationComponent
 
-class App: Application() {
+class App : Application() {
 
     lateinit var component: ApplicationComponent
 

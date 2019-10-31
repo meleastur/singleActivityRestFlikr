@@ -23,12 +23,13 @@ ext {
     glide_version = '4.10.0'
     okhttpClient_version ='3.9.0'
     rxjava2_version = '2.1.8'
-    rxandroid_version = '2.0.1'
-    dagger2_version = '2.15'
+    rxandroid_version = '2.0.2'
+    dagger2_version = '2.20'
     support_version = '26.1.0'
     stfalcon_version = '0.1.0'
     material_version = '1.2.0-alpha01'
     dexter_version = '5.0.0'
+    eventBus_version = '3.1.1'
 }
 
 

@@ -3,6 +3,7 @@ package com.meleastur.singleactivityrestflikr.ui.search_images
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -14,11 +15,11 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.meleastur.singleactivityrestflikr.BuildConfig
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
@@ -32,14 +33,14 @@ import javax.inject.Inject
 @EFragment(R.layout.fragment_search_images)
 @OptionsMenu(R.menu.menu_search_images)
 open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
-    SearchImagesAdapter.onItemClickListener,
+    SearchImagesAdapter.ItemClickListener,
     SearchView.OnQueryTextListener {
 
-    private var listener: Interactor? = null
+    private var listener: SearchImagesInterector? = null
+    private val SEARCH_IMAGES = "searchImages"
 
     @Inject
     lateinit var presenter: SearchImagesContract.Presenter
-
     // ==============================
     // region Views
     // ==============================
@@ -60,10 +61,10 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     protected lateinit var imageError: ImageView
 
     @ViewById(R.id.fab_pagination)
-    protected lateinit var fabPagination: ExtendedFloatingActionButton
+    protected lateinit var fabPagination: TextView
 
     @ViewById(R.id.fab_elements)
-    protected lateinit var fabElements: ExtendedFloatingActionButton
+    protected lateinit var fabElements: TextView
 
     // endregion
 
@@ -73,11 +74,13 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
     lateinit var searchImageAdapter: SearchImagesAdapter
     lateinit var searchView: SearchView
-    var textSelected: String? = null
+    var selectedText: String? = null
 
     var isLoading: Boolean = false
     var actualPage: Int = 0
     var actualPerPage: Int = 0
+
+    var searchImage: ArrayList<SearchImage>? = null
     // endregion
 
     // ==============================
@@ -90,6 +93,17 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             .build()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+       // outState.p(searchImage, SEARCH_IMAGES)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+       // searchImage savedInstanceState.getString(SEARCH_IMAGES)
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -97,12 +111,19 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
         presenter.attach(this)
         presenter.subscribe()
+        if (BuildConfig.DEBUG) {
+            isLoading = true
+            actualPerPage = 0
+            actualPage = 0
+            selectedText = "pizza"
+            presenter.searchImageByText(selectedText!!, isWiFiConnected())
+        }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        listener = context as Interactor
+        listener = context as SearchImagesInterector
     }
 
     override fun onDestroyView() {
@@ -137,20 +158,15 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     }
 
     override fun showEmptyDataError(error: String) {
-        emptyStateParent.visibility = View.VISIBLE
-
-        imageError.visibility = View.VISIBLE
-        imageError.setImageDrawable(
-            ContextCompat.getDrawable(
-                activity!!.applicationContext,
-                R.drawable.ic_report_problem
-            )
-        )
-        textError.visibility = View.VISIBLE
-        textError.text = error
+        Snackbar
+            .make(emptyStateParent, "Ups... alguna foto no se descargo correctamente " + error, Snackbar.LENGTH_LONG)
+            .setDuration(1000)
+            .show()
     }
 
     override fun loadDataSuccess(searchImage: ArrayList<SearchImage>, isToAddMore: Boolean) {
+        listener?.onUpdateSavedSearchImage(searchImage)
+
         if (!isToAddMore) {
             fabPagination.visibility = View.VISIBLE
             fabPagination.text =
@@ -174,8 +190,8 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
         showProgress(false)
 
-        if (!TextUtils.isEmpty(textSelected)) {
-            listener?.onChangeTitleSearch(textSelected!!)
+        if (!TextUtils.isEmpty(selectedText)) {
+            listener?.onChangeTitleSearch(selectedText!!)
         } else {
             listener?.onChangeTitleSearch(getString(R.string.search_image_frag_title))
         }
@@ -184,10 +200,10 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // endregion
 
     // ==============================
-    // region  SearchImagesAdapter.onItemClickListener
+    // region  SearchImagesAdapter.ItemClickListener
     // ==============================
-    override fun itemDetail(searchImage: SearchImage, transactionName: String) {
-        listener?.onShowDetailImageFragment(searchImage, transactionName)
+    override fun itemDetail(searchImage: SearchImage, imageView: ImageView) {
+        listener?.onShowDetailImageFragment(searchImage, imageView)
     }
 
     override fun itemPositionChange(page: Int, perPage: Int, position: Int) {
@@ -198,7 +214,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         if (!isLoading) {
             showProgress(true)
             actualPage += 1
-            presenter.searchImageByText(textSelected!!, actualPage, isWiFiConected())
+            presenter.searchImageByText(selectedText!!, actualPage, isWiFiConnected())
         }
 
     }
@@ -255,11 +271,11 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchView.windowToken, 0)
 
-            textSelected = query
+            selectedText = query
             isLoading = true
             actualPerPage = 0
             actualPage = 0
-            presenter.searchImageByText(textSelected!!, isWiFiConected())
+            presenter.searchImageByText(selectedText!!, isWiFiConnected())
 
             return true
         }
@@ -295,24 +311,39 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             )
     }
 
-    fun isWiFiConected(): Boolean {
-        val connectivityManager =
-            activity!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork
-            val capabilities = connectivityManager.getNetworkCapabilities(network)
-            capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    @Suppress("DEPRECATION")
+    private fun isWiFiConnected(): Boolean {
+        val cm = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm?.run {
+                cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                    when {
+                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
+                        else -> return false
+                    }
+                }
+            }
         } else {
-            connectivityManager.activeNetworkInfo?.type == ConnectivityManager.TYPE_WIFI
+            cm?.run {
+                cm.activeNetworkInfo?.run {
+                    if (type == ConnectivityManager.TYPE_WIFI) {
+                        return true
+                    }
+                }
+            }
         }
+        return false
     }
     // endregion
 
     //==============================
     // region Inteactor
     // ==============================
-    interface Interactor {
-        fun onShowDetailImageFragment(searchImage: SearchImage, transactionName: String)
+    interface SearchImagesInterector {
+        fun onUpdateSavedSearchImage(savedSearchImages: ArrayList<SearchImage>)
+
+        fun onShowDetailImageFragment(searchImage: SearchImage, imageView: ImageView)
 
         fun onChangeTitleSearch(text: String)
     }

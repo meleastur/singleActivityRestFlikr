@@ -8,84 +8,52 @@
     android:layout_marginTop="@dimen/medium"
     android:layout_marginEnd="@dimen/x_medium"
     android:layout_marginBottom="@dimen/small"
-    app:cardCornerRadius="28dp"
     app:elevation="@dimen/medium">
 
     <RelativeLayout
         android:id="@+id/item_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:background="?attr/selectableItemBackgroundBorderless">
 
         <ImageView
             android:id="@+id/image_thumbnail"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="100dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
             android:adjustViewBounds="true"
-            android:layout_height="132dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
+            android:background="@null"
             android:foregroundGravity="top"
             app:srcCompat="@drawable/ic_photo" />
-
-        <TextView
-            android:id="@+id/image_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/image_thumbnail"
-            android:layout_alignStart="@+id/image_thumbnail"
-            android:layout_marginStart="@dimen/large"
-            android:layout_marginTop="@dimen/medium"
-            android:layout_marginEnd="@dimen/large"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@string/search_image_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/gray_medium"
-            android:textSize="@dimen/text_small" />
 
         <TextView
             android:id="@+id/image_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_title_title"
-            android:layout_alignStart="@+id/image_thumbnail"
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/x_small"
             android:layout_marginEnd="@dimen/large"
+            android:layout_toEndOf="@+id/image_thumbnail"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_small" />
-
-        <TextView
-            android:id="@+id/image_author_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/image_title"
-            android:layout_alignStart="@+id/image_thumbnail"
-            android:layout_marginStart="@dimen/large"
-            android:layout_marginTop="@dimen/medium"
-            android:layout_marginEnd="@dimen/large"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@string/search_image_autor"
+            android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/gray_medium"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/text_small" />
 
         <TextView
             android:id="@+id/image_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_author_title"
-            android:layout_alignStart="@+id/image_thumbnail"
+            android:layout_below="@id/image_title"
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/x_small"
             android:layout_marginEnd="@dimen/large"
-            android:layout_marginBottom="@dimen/x_medium"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_marginBottom="@dimen/x_small"
+            android:layout_toEndOf="@+id/image_thumbnail"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_small" />
 

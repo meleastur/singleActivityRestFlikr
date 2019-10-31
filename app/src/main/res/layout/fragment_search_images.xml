@@ -15,26 +15,56 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/item_search_images" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_pagination"
-        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_card_pag_layout"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/medium"
-        android:animateLayoutChanges="true"
         android:layout_marginEnd="@dimen/x_medium"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/bg_fab"
+        android:foregroundGravity="center"
+        app:elevation="@dimen/x_medium">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/fab_pagination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/medium"
+                android:text="@string/search_image_pagination"
+                android:textColor="@color/colorAccent" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/medium"
+        android:layout_marginEnd="@dimen/x_medium"
+        android:animateLayoutChanges="true"
+        android:clickable="false"
         android:text="@string/search_image_pagination"
         android:textAllCaps="false"
-        android:textSize="@dimen/text_small"
-        android:clickable="false"
-        android:visibility="gone"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/colorAccent"
         android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_small"
+        android:visibility="gone"
+        app:background="@drawable/bg_fab"
         app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="0dp"
         app:rippleColor="@color/colorAccent_unfocused"
+        app:strokeColor="@color/colorAccent"
+        app:strokeWidth="1dp"
         tools:ignore="RelativeOverlap" />
 
     <RelativeLayout
@@ -50,8 +80,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_search"
-            android:tint="@color/gray_medium" />
+            android:tint="@color/gray_medium"
+            app:srcCompat="@drawable/ic_search" />
 
         <TextView
             android:id="@+id/text_error"
@@ -70,33 +100,62 @@
         android:layout_height="50dp"
         android:layout_above="@+id/empty_state"
         android:layout_centerInParent="true"
-        android:background="@drawable/bg_progress_circle"
+        android:background="@drawable/bg_progress"
         android:indeterminate="true"
         android:padding="@dimen/medium"
         android:theme="@style/MyProgressBar"
         android:visibility="gone" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_elements"
-        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_card_element_layout"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginEnd="@dimen/x_medium"
         android:animateLayoutChanges="true"
+        android:background="@drawable/bg_fab"
+        android:foregroundGravity="center"
+        app:elevation="@dimen/x_medium">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/fab_elements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/medium"
+                android:text="@string/search_image_elements"
+                android:textColor="@color/colorAccent" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/medium"
         android:layout_marginEnd="@dimen/x_medium"
+        android:layout_marginBottom="@dimen/medium"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/bg_fab"
+        android:clickable="false"
         android:text="@string/search_image_elements"
         android:textAllCaps="false"
-        android:layout_marginBottom="@dimen/large"
-        android:textSize="@dimen/text_small"
-        android:clickable="false"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/colorAccent"
-        android:visibility="gone"
         android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_small"
+        android:visibility="gone"
         app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="0dp"
         app:rippleColor="@color/colorAccent_unfocused"
+        app:strokeColor="@color/colorAccent"
+        app:strokeWidth="1dp"
         tools:ignore="RelativeOverlap" />
 
 </RelativeLayout>

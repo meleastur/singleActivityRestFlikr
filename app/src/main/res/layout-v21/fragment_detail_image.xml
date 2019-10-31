@@ -17,17 +17,18 @@
             android:id="@+id/image_thumbnail_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:background="?attr/selectableItemBackground">
+            android:animateLayoutChanges="true">
 
             <ImageView
                 android:id="@+id/image_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="-126dp"
+                android:layout_centerHorizontal="true"
+                android:transitionName="thumbnailImage"
+                android:layout_marginTop="8dp"
                 android:adjustViewBounds="true"
-                android:background="@null"
+                android:background="?attr/selectableItemBackground"
                 android:maxHeight="400dp"
                 app:srcCompat="@drawable/ic_photo" />
 
@@ -175,37 +176,29 @@
             android:layout_marginEnd="@dimen/large"
             android:layout_marginBottom="-24dp"
             android:animateLayoutChanges="true"
+            android:text="@string/share_button"
             app:cardBackgroundColor="@color/colorAccent"
             app:elevation="@dimen/x_medium"
             app:rippleColor="@color/colorAccent_unfocused">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="@dimen/medium"
-                    android:layout_marginBottom="@dimen/medium"
-                    android:layout_marginTop="@dimen/medium"
-                    app:srcCompat="@drawable/ic_share"
-                    android:adjustViewBounds="true"
-                    android:background="@null"/>
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/fab_pagination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_share"
                     app:iconTint="@color/colorPrimary"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/medium"
-                    android:text="@string/share_button"
+                    android:text="@string/search_image_pagination"
                     android:textColor="@color/colorPrimary" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -14,12 +13,12 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomTarget
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
@@ -41,16 +40,13 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @Inject
     lateinit var presenter: DetailImageContract.Presenter
 
-    private var listener: Interactor? = null
+    private var listener: DetailImageFragmentInteractor? = null
 
     // ==============================
     // region FragmentArg
     // ==============================
     @FragmentArg
     protected lateinit var searchImage: SearchImage
-
-    @FragmentArg
-    protected lateinit var transactionName: String
 
     // endRegion
 
@@ -76,7 +72,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     protected lateinit var description: TextView
 
     @ViewById(R.id.fab_share)
-    protected lateinit var fabShare: ExtendedFloatingActionButton
+    protected lateinit var fabShare: CardView
 
     @ViewById(R.id.progressBar)
     protected lateinit var progressBar: ProgressBar
@@ -86,6 +82,9 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
     // region vars
     // ==============================
+    private var height: Int = 1440
+    private var width: Int = 1920
+
     private var currentPosition: Int = 0
 
     private lateinit var viewer: StfalconImageViewer<String>
@@ -102,11 +101,10 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // region Fragment
     // ==============================
 
-    fun newInstance(searchImage: SearchImage, transactionName: String): DetailImageFragment {
+    fun newInstance(searchImage: SearchImage): DetailImageFragment {
         return DetailImageFragment_
             .builder()
             .searchImage(searchImage)
-            .transactionName(transactionName)
             .build()
     }
 
@@ -119,18 +117,11 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         presenter.subscribe()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val sharedView = view.rootView.findViewById<ImageView>(R.id.image_thumbnail)
-            sharedView.transitionName = transactionName
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        listener = context as Interactor
+        listener = context as DetailImageFragmentInteractor
     }
 
     override fun onResume() {
@@ -144,8 +135,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .load(urlImage)
             .transition(withCrossFade())
             .placeholder(R.drawable.ic_photo)
-            .override(1920,1080)
-            .apply { Constants.optionsGlide }
+            .override(width, height)
+        .apply { Constants.optionsGlide }
             .centerInside()
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(
@@ -210,7 +201,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
     // region Click
     // ==============================
-    @Click(R.id.image_thumbnail)
+    @Click(R.id.image_thumbnail_parent)
     fun clickThumbnailImage() {
         openViewer(currentPosition)
     }
@@ -255,7 +246,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(Constants.optionsGlide)
                 .centerInside()
-                .override(1920,1080)
+                .override(width, height)
                 .into(imageView)
         }
     }
@@ -268,16 +259,15 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // Permiso de escritura
     private fun askWriteStorage() {
         permisionHelper.askForWriteStorage(activity!!, object : GenericCallback {
-            override fun onSuccess() {
-                shareURLImage()
-            }
-
-            override fun onError(error: String?) {
+            override fun onError(error: String) {
                 showProgress(false)
 
                 Toast.makeText(
                     activity, R.string.share_image_error, Toast.LENGTH_SHORT
-                ).show()
+                ).show()            }
+
+            override fun onSuccess() {
+                shareURLImage()
             }
         })
     }
@@ -285,16 +275,16 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // Intent Compartir
     @Background
     open fun shareURLImage() {
+        showProgress(false)
+
         val bmpUri = utils.getLocalBitmapUri(activity!!, bitmap)
         if (bmpUri != null) {
-            openShateActivity(bmpUri)
+            openShareActivity(bmpUri)
         }
     }
 
     @UiThread
-    open fun openShateActivity(bmpUri: Uri) {
-        showProgress(false)
-
+    open fun openShareActivity(bmpUri: Uri) {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
@@ -303,13 +293,13 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         startActivity(Intent.createChooser(shareIntent, "Compartir con"))
     }
 
-    private fun showSnackRestartGlide(imageView: ImageView, urlGlide: URL) {
+    private fun showSnackRestartGlide(imageView: ImageView, url: URL) {
         Snackbar
             .make(imageView, "Error en la descarga", Snackbar.LENGTH_LONG)
             .setAction("Reintentar") {
                 Glide.with(this)
-                    .load(urlGlide)
-                    .override(1920,1080)
+                    .load(url)
+                    .override(1920, 1080)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .apply { Constants.optionsGlide }
                     .into(imageView)
@@ -330,7 +320,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // region Inteactor
     // ==============================
 
-    interface Interactor {
+    interface DetailImageFragmentInteractor {
         fun onRequestOrientation(isToPortrait: Boolean)
     }
     // endregion

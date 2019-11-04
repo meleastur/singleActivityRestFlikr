@@ -25,12 +25,24 @@
     <string name="share_button">COMPARTIR</string>
 
     <!--ShareImage Errores-->
-    <string name="share_image_error"> Ha ocurrido un error, por favor inténtalo de nuevo más tarde</string>
+    <string name="share_image_error">Ha ocurrido un error, por favor inténtalo de nuevo más tarde</string>
 
     <!--Menu-->
+    <string name="biometric_login_off">Desactivar incio biometríco</string>
+    <string name="biometric_login_on">Activar incio biometríco</string>
     <string name="dark_theme_off">Desactivar tema oscuro</string>
     <string name="dark_theme_on">Activar tema oscuro</string>
     <string name="app_settings">Ajustes de la app</string>
     <string name="about">Acerca de</string>
 
+    <!--BiometricPrompt-->
+    <string name="biometric_title">@string/app_name</string>
+    <string name="biometric_subtitle">Credenciales biometrícas necesarias</string>
+    <string name="biometric_description">Sí algo no funciona bien, puedes usar el método alternativo de más abajo</string>
+    <string name="biometric_cancel"> Salir</string>
+    <string name="biometric_success">Todo correcto, cargando…</string>
+    <string name="biometric_error_unknown">Ha ocurrido un error, vuelve a intentarlo más tarde</string>
+    <string name="biometric_error_no_hardware_supported">No hay sensores biometrícos en el dispositivoe</string>
+    <string name="biometric_error_no_hardware_available">Los sensores biometrícos no están disponibles en éste momento</string>
+    <string name="biometric_error_no_auth_enrolled">No hay ningúna credencial biometríca enlazada aún</string>
 </resources>

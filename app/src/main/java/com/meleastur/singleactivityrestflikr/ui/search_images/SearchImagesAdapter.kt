@@ -16,7 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.util.GlideApp
-import com.meleastur.singleactivityrestflikr.util.GlideModule
+import com.meleastur.singleactivityrestflikr.util.GlideAppModule
 import java.net.URL
 
 
@@ -47,7 +47,7 @@ class SearchImagesAdapter(
 
             GlideApp.with(fragment)
                 .load(url)
-                .apply(GlideModule.optionsGlide)
+                .apply(GlideAppModule.optionsGlide)
                 .centerCrop()
                 .override(width, height)
                 .transition(withCrossFade())
@@ -59,7 +59,7 @@ class SearchImagesAdapter(
             )
             GlideApp.with(fragment)
                 .load(R.drawable.ic_photo)
-                .apply(GlideModule.optionsGlide)
+                .apply(GlideAppModule.optionsGlide)
                 .centerCrop()
                 .override(width, height)
                 .transition(withCrossFade())
@@ -104,7 +104,7 @@ class SearchImagesAdapter(
                     .load(urlGlide)
                     .placeholder(R.drawable.ic_photo)
                     .transition(withCrossFade())
-                    .apply(GlideModule.optionsGlide)
+                    .apply(GlideAppModule.optionsGlide)
                     .transition(withCrossFade())
                     .into(imageView)
             }.show()

@@ -82,7 +82,7 @@
         android:indeterminate="true"
         android:padding="@dimen/medium"
         android:theme="@style/MyProgressBar"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_card_element_layout"

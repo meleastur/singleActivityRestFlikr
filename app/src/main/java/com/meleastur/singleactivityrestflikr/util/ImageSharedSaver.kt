@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
+import com.meleastur.singleactivityrestflikr.util.callback.GenericCallback
+import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
 import org.androidannotations.annotations.Background
 import org.androidannotations.annotations.EBean
 import java.io.File
@@ -16,12 +18,10 @@ import java.net.URI
 open class ImageSharedSaver {
 
     @Background
-    open fun saveBitmap(activity: Activity, fullImageURL: String, bitmap: Bitmap, uriCallBack: GenericCallback<Uri?>?) {
+    open fun saveBitmap(activity: Activity, fullImageURL: String, bitmap: Bitmap, callback: GenericCallback<Uri?>) {
         try {
             val uri: Uri?
-
-            val uriAux = URI(fullImageURL)
-            val tokensVal = uriAux.path.split("/")
+            val tokensVal = URI(fullImageURL).path.split("/")
             var fileName = "simpleActivity_image_share_"
             when {
                 tokensVal.size == 3 -> fileName += tokensVal[2]
@@ -37,19 +37,16 @@ open class ImageSharedSaver {
             }
 
             uri = FileProvider.getUriForFile(activity, ".fileprovider", file)
-            uriCallBack?.onSuccess(uri)
-
+            callback.onSuccess(uri)
         } catch (e: Exception) {
             Log.e("ImageSharedSaver", "Exception while trying to write file for sharing: " + e.message)
-            uriCallBack?.onError(e.message)
+            callback.onError(e.message)
         }
     }
 
     @Background
-    open fun deleteBitmap(activity: Activity, fullImageURL: String, bitmap: Bitmap, callBack: VoidCallback?) {
+    open fun deleteBitmap(activity: Activity, fullImageURL: String, bitmap: Bitmap, callBack: VoidCallback) {
         try {
-            val uri: Uri?
-
             val uriAux = URI(fullImageURL)
             val tokensVal = uriAux.path.split("/")
             var fileName = "simpleActivity_image_share_"
@@ -63,10 +60,10 @@ open class ImageSharedSaver {
             if (file.exists()) {
                 file.delete()
             }
-            callBack?.onSuccess()
+            callBack.onSuccess()
         } catch (e: Exception) {
             Log.e("ImageSharedSaver", "Exception while trying to write file for sharing: " + e.message)
-            callBack?.onError(e.message)
+            callBack.onError(e.message)
         }
     }
 }

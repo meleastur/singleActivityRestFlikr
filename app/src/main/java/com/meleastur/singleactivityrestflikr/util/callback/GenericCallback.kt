@@ -1,4 +1,4 @@
-package com.meleastur.singleactivityrestflikr.util
+package com.meleastur.singleactivityrestflikr.util.callback
 
 interface GenericCallback<T> {
 

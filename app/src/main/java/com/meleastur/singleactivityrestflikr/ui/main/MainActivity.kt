@@ -26,7 +26,7 @@ import com.meleastur.singleactivityrestflikr.ui.detail_image.OnDetailImageEvent
 import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
 import com.meleastur.singleactivityrestflikr.util.Constants.Companion.DETAIL_IMAGE
 import com.meleastur.singleactivityrestflikr.util.Constants.Companion.SEARCH_IMAGES
-import com.meleastur.singleactivityrestflikr.util.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

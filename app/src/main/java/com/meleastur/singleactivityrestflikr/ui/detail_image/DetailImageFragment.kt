@@ -29,6 +29,8 @@ import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.util.*
+import com.meleastur.singleactivityrestflikr.util.callback.GenericCallback
+import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
 import com.stfalcon.imageviewer.StfalconImageViewer
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
@@ -150,7 +152,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .centerInside()
             .placeholder(R.drawable.ic_photo)
             .override(width, height)
-            .apply { GlideModule.optionsGlide }
+            .apply { GlideAppModule.optionsGlide }
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(
                     resource: Bitmap,
@@ -167,8 +169,11 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                         == PackageManager.PERMISSION_GRANTED
                     ) {
                         imageSharedSaver.saveBitmap(
-                            activity!!, searchImage.fullImageURL, bitmap, null
-                        )
+                            activity!!, searchImage.fullImageURL, bitmap, object :
+                                GenericCallback<Uri?> {
+                                override fun onSuccess(successObject: Uri?) {}
+                                override fun onError(error: String?) {}
+                            })
                     }
                 }
 
@@ -291,7 +296,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             GlideApp.with(this)
                 .load(searchImage)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .apply(GlideModule.optionsGlide)
+                .apply(GlideAppModule.optionsGlide)
                 .centerInside()
                 .override(width, height)
                 .into(imageView)
@@ -305,7 +310,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Permiso de escritura
     private fun askWriteStorage() {
-        permissionHelper.askForWriteStorage(activity!!, object : VoidCallback {
+        permissionHelper.askForWriteStorage(activity!!, object :
+            VoidCallback {
             override fun onError(error: String?) {
                 Toast.makeText(
                     activity,
@@ -322,16 +328,15 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Intent Compartir
     open fun saveShareImage() {
-        imageSharedSaver.saveBitmap(activity!!, searchImage.fullImageURL, bitmap, object : GenericCallback<Uri?> {
+        imageSharedSaver.saveBitmap(activity!!, searchImage.fullImageURL, bitmap, object :
+            GenericCallback<Uri?> {
             override fun onSuccess(successObject: Uri?) {
                 if (successObject != null) {
                     openShareActivity(successObject)
                 }
             }
 
-            override fun onError(error: String?) {
-                return
-            }
+            override fun onError(error: String?) {}
         })
     }
 
@@ -354,7 +359,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                     .load(url)
                     .override(1920, 1080)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply { GlideModule.optionsGlide }
+                    .apply { GlideAppModule.optionsGlide }
                     .into(imageView)
             }.show()
     }

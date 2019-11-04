@@ -1,4 +1,4 @@
-package com.meleastur.singleactivityrestflikr.util
+package com.meleastur.singleactivityrestflikr.util.preferences
 
 import org.androidannotations.annotations.sharedpreferences.SharedPref
 
@@ -6,5 +6,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref
 interface Preferences {
 
     fun isNightModeOn(): Boolean
+
+    fun isBiometricLoginOn(): Boolean
 }
 

@@ -145,6 +145,9 @@ dependencies {
     // dexter
     implementation "com.karumi:dexter:$dexter_version"
 
+    // biometric
+    implementation "androidx.biometric:biometric:$biometric_version"
+
     // ui
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation "com.android.support:recyclerview-v7:$support_version"

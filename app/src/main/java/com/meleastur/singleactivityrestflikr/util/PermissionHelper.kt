@@ -6,6 +6,7 @@ import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.single.BasePermissionListener
+import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
 import org.androidannotations.annotations.EBean
 
 @EBean

@@ -15,7 +15,7 @@ import com.meleastur.singleactivityrestflikr.R
 
 
 @GlideModule
-class GlideModule : AppGlideModule() {
+class GlideAppModule : AppGlideModule() {
     companion object {
         val optionsGlide = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.ALL)

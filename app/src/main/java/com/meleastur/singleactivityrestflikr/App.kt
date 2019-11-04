@@ -1,16 +1,20 @@
 package com.meleastur.singleactivityrestflikr
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.meleastur.singleactivityrestflikr.di.component.ApplicationComponent
 import com.meleastur.singleactivityrestflikr.di.component.DaggerApplicationComponent
+import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
+import org.androidannotations.annotations.Bean
+import org.androidannotations.annotations.EApplication
 
-class App : Application() {
+@EApplication
+open class App : Application() {
 
     lateinit var component: ApplicationComponent
 
-    companion object {
-        lateinit var appInstance: App private set
-    }
+    @Bean
+    protected lateinit var preferencesHelper: PreferencesHelper
 
     // ==============================
     // region Application
@@ -19,8 +23,13 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        appInstance = this
         initApp()
+
+        if (preferencesHelper.getNightMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
         if (BuildConfig.DEBUG) {
             // Para inicializar en debug Fabric o demás trackers y loggers

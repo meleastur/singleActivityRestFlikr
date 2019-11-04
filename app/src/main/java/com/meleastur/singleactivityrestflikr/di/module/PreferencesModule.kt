@@ -1,8 +1,8 @@
 package com.meleastur.singleactivityrestflikr.di.module
 
 import android.content.Context
-import com.meleastur.singleactivityrestflikr.util.PreferencesHelper
-import com.meleastur.singleactivityrestflikr.util.PreferencesHelper_
+import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper_
 import dagger.Module
 import dagger.Provides
 

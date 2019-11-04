@@ -12,16 +12,23 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
+        android:id="@+id/action_biometric_login"
+        android:title="@string/biometric_login_on"
+        android:orderInCategory="200"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_night_mode"
         android:title="@string/dark_theme_off"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_app_settings"
         android:title="@string/app_settings"
-        android:orderInCategory="300"
+        android:orderInCategory="400"
         android:visible="false"
         app:showAsAction="never" />
 
@@ -29,6 +36,6 @@
         android:id="@+id/action_about"
         android:title="@string/about"
         android:visible="false"
-        android:orderInCategory="400"
+        android:orderInCategory="500"
         app:showAsAction="never" />
 </menu>

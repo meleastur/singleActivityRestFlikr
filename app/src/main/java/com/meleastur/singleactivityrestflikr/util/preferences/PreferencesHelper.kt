@@ -1,4 +1,4 @@
-package com.meleastur.singleactivityrestflikr.util
+package com.meleastur.singleactivityrestflikr.util.preferences
 
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.EBean
@@ -20,6 +20,14 @@ open class PreferencesHelper {
     fun getNightMode(): Boolean {
         return preferences.isNightModeOn.getOr(false)
 
+    }
+
+    fun setBiometricLogin(isBiometricLoginOn: Boolean) {
+        preferences.isBiometricLoginOn.put(isBiometricLoginOn)
+    }
+
+    fun getIsBiometricLogin(): Boolean {
+        return preferences.isBiometricLoginOn.getOr(true)
     }
 
 /*    fun getCredentials(): Credentials? {

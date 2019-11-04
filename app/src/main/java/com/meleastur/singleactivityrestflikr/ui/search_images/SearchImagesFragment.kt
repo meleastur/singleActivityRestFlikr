@@ -20,14 +20,13 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.meleastur.singleactivityrestflikr.BuildConfig
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.util.NetworkInformer
-import com.meleastur.singleactivityrestflikr.util.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
@@ -100,6 +99,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     var searchImage: ArrayList<SearchImage>? = null
 
     var isNightModeOn: Boolean = false
+    var isBiometricLoginOn: Boolean = false
     // endregion
 
     // ==============================
@@ -137,14 +137,15 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
     override fun onResume() {
         super.onResume()
-        if (BuildConfig.DEBUG) {
+     /*   if (BuildConfig.DEBUG) {
             showProgress(true)
             isLoading = true
             actualPerPage = 0
             actualPage = 0
             selectedText = "pizza"
             presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
-        }
+        }*/
+        isBiometricLoginOn = preferencesHelper.getIsBiometricLogin()
     }
 
     override fun onDestroyView() {
@@ -169,6 +170,15 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         searchMenuView?.setOnQueryTextListener(this)
         val manager = context?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchMenuView?.setSearchableInfo(manager.getSearchableInfo(activity?.componentName))
+
+        val biometric = menu.findItem(R.id.action_biometric_login)
+        biometric.isVisible = true
+        biometric.setOnMenuItemClickListener(this)
+        biometric.title = if (isBiometricLoginOn) {
+            getString(R.string.biometric_login_off)
+        } else {
+            getString(R.string.biometric_login_on)
+        }
 
         val nightMode = menu.findItem(R.id.action_night_mode)
         nightMode.isVisible = true
@@ -195,6 +205,16 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // ==============================
     override fun onMenuItemClick(menuItem: MenuItem?): Boolean {
         when (menuItem?.itemId) {
+            R.id.action_biometric_login -> {
+                isBiometricLoginOn = !isBiometricLoginOn
+                preferencesHelper.setBiometricLogin(isBiometricLoginOn)
+                menuItem.title = if (isBiometricLoginOn) {
+                    getString(R.string.biometric_login_off)
+                } else {
+                    getString(R.string.biometric_login_on)
+                }
+                return true
+            }
             R.id.action_night_mode -> {
                 isNightModeOn = !isNightModeOn
                 listener?.onNightModeClick(isNightModeOn)
@@ -262,6 +282,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             cardViewElements.visibility = View.VISIBLE
             fabElements.text =
                 getString(R.string.search_image_elements, "1", searchImage[0].perPage.toString())
+            getString(R.string.search_image_elements, "1", searchImage[0].perPage.toString())
 
             searchImageAdapter = SearchImagesAdapter(activity!!, searchImage, this)
             val linearLayout = LinearLayoutManager(activity)

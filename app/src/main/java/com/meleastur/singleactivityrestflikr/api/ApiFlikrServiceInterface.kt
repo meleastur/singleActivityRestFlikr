@@ -3,6 +3,11 @@ package com.meleastur.singleactivityrestflikr.api
 import com.meleastur.singleactivityrestflikr.model.flikrapi.photo_info.PhotoInfoResponse
 import com.meleastur.singleactivityrestflikr.model.flikrapi.search_images.ImagesResponse
 import com.meleastur.singleactivityrestflikr.util.Constants
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.FORMAT_
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.JSON_CALLBACK_
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.PER_PAGE
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.PHOTOS
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.URLS
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.OkHttpClient
@@ -12,13 +17,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-const val URLS = "url_l, url_m, url_n, url_z, url_o"
-const val PER_PAGE = 100
-
 interface ApiFlikrServiceInterface {
 
     //flickr.photos.search
-    @GET("services/rest/?method=flickr.photos.search&nojsoncallback=1&format=json")
+    @GET("$PHOTOS.search&$JSON_CALLBACK_&$FORMAT_")
     fun searchPhotos(
         @Query("api_key") apiKey: String,
         @Query("text") text: String? = "",
@@ -27,7 +29,7 @@ interface ApiFlikrServiceInterface {
     ): Observable<ImagesResponse>
 
     //flickr.photos.search
-    @GET("services/rest/?method=flickr.photos.search&nojsoncallback=1&format=json")
+    @GET("$PHOTOS.search&$JSON_CALLBACK_&$FORMAT_")
     fun searchPhotosByPage(
         @Query("api_key") apiKey: String,
         @Query("text") text: String? = "",
@@ -37,7 +39,7 @@ interface ApiFlikrServiceInterface {
     ): Observable<ImagesResponse>
 
     //flickr.photos.getInfo
-    @GET("services/rest/?method=flickr.photos.getInfo&nojsoncallback=1&format=json")
+    @GET("$PHOTOS.getInfo&$JSON_CALLBACK_&$FORMAT_")
     fun getPhotoInfo(
         @Query("api_key") apiKey: String,
         @Query("photo_id") photoId: String? = null

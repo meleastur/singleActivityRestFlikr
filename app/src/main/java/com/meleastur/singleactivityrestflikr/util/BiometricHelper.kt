@@ -27,6 +27,7 @@ class BiometricHelper {
         title = fragmentActivity.getString(R.string.biometric_title)
         subTitle = fragmentActivity.getString(R.string.biometric_subtitle)
         description = fragmentActivity.getString(R.string.biometric_description)
+        cancelText = fragmentActivity.getString(R.string.biometric_cancel)
         instanceOfBiometricPrompt(fragmentActivity, voidCallback)
         biometricPrompt?.authenticate(getPromptInfo())
     }

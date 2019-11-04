@@ -32,7 +32,9 @@
                 android:maxHeight="@dimen/image_maxHeight_detail"
                 android:minHeight="@dimen/image_minHeight_detail"
                 app:srcCompat="@drawable/ic_photo" />
+
         </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/item_card_layout_parent"
@@ -128,8 +130,8 @@
                         android:layout_below="@id/image_date_title"
                         android:layout_alignStart="@+id/image_author_title"
                         android:layout_marginTop="@dimen/small"
-                        android:layout_marginBottom="@dimen/medium"
                         android:layout_marginEnd="@dimen/large"
+                        android:layout_marginBottom="@dimen/medium"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textColor="@color/text_body2"
                         android:textSize="@dimen/text_medium" />
@@ -163,6 +165,21 @@
 
             </androidx.cardview.widget.CardView>
 
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_progress"
+                android:indeterminate="true"
+                android:padding="@dimen/medium"
+                android:theme="@style/MyProgressBar"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <androidx.cardview.widget.CardView
@@ -202,8 +219,8 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="@dimen/x_medium"
                     android:text="@string/share_button"
-                    android:textStyle="bold"
                     android:textColor="@color/share_button"
+                    android:textStyle="bold"
                     app:iconTint="@color/colorPrimary" />
 
             </LinearLayout>

@@ -25,6 +25,7 @@ import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponen
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
+import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
 import com.meleastur.singleactivityrestflikr.util.NetworkInformer
 import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
 import org.androidannotations.annotations.Bean
@@ -53,7 +54,6 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // ==============================
     // region Views
     // ==============================
-
     @ViewById(R.id.progressBar)
     protected lateinit var progressBar: ProgressBar
 
@@ -145,6 +145,9 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             selectedText = "pizza"
             presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
         }*/
+        if(!TextUtils.isEmpty((activity as MainActivity).lastSearchTitle)){
+            presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
+        }
         isBiometricLoginOn = preferencesHelper.getIsBiometricLogin()
     }
 

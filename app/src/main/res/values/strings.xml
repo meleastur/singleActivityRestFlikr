@@ -28,8 +28,8 @@
     <string name="share_image_error">Ha ocurrido un error, por favor inténtalo de nuevo más tarde</string>
 
     <!--Menu-->
-    <string name="biometric_login_off">Desactivar incio biometríco</string>
-    <string name="biometric_login_on">Activar incio biometríco</string>
+    <string name="biometric_login_off">Desactivar login biometríco</string>
+    <string name="biometric_login_on">Activar login biometríco</string>
     <string name="dark_theme_off">Desactivar tema oscuro</string>
     <string name="dark_theme_on">Activar tema oscuro</string>
     <string name="app_settings">Ajustes de la app</string>

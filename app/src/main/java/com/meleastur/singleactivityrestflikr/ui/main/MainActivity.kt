@@ -46,7 +46,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     @Bean
     lateinit var preferencesHelper: PreferencesHelper
 
-    private var lastSearchTitle = ""
+    var lastSearchTitle = ""
     private var savedSearchImages: ArrayList<SearchImage>? = null
     private var actualImage: SearchImage? = null
     private var isNightModeOn = false

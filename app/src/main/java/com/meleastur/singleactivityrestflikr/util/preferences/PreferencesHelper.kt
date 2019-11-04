@@ -27,7 +27,7 @@ open class PreferencesHelper {
     }
 
     fun getIsBiometricLogin(): Boolean {
-        return preferences.isBiometricLoginOn.getOr(true)
+        return preferences.isBiometricLoginOn.getOr(false)
     }
 
 /*    fun getCredentials(): Credentials? {

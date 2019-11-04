@@ -11,10 +11,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -22,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
@@ -69,6 +67,9 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     @ViewById(R.id.image_thumbnail)
     protected lateinit var thumbnailImage: AppCompatImageView
+
+    @ViewById(R.id.progressBar)
+    protected lateinit var progressBar: ProgressBar
 
     @ViewById(R.id.image_author)
     protected lateinit var author: TextView
@@ -143,6 +144,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     }
 
     fun initViews() {
+        showProgress(true)
         val urlImage = URL(searchImage.fullImageURL)
 
         GlideApp.with(this)
@@ -164,6 +166,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
                     bitmap = resource
                     thumbnailImage.setImageBitmap(resource)
+
                     // Precargamos el bitmap en memoria
                     if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED
@@ -174,6 +177,9 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                                 override fun onSuccess(successObject: Uri?) {}
                                 override fun onError(error: String?) {}
                             })
+                        showProgress(false)
+                    } else {
+                        showProgress(false)
                     }
                 }
 
@@ -255,6 +261,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @Click(R.id.image_thumbnail)
     fun clickThumbnailImage() {
         listener?.onRequestOrientation(false)
+        showProgress(true)
         cardViewShare.visibility = View.GONE
         cardViewShare.post {
             openViewer(currentPosition)
@@ -271,6 +278,13 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
     // region métodos privados
     // ==============================
+    private fun showProgress(show: Boolean) {
+        if (show) {
+            progressBar.visibility = View.VISIBLE
+        } else {
+            progressBar.visibility = View.GONE
+        }
+    }
 
     // Viewer de la imagen
     private fun openViewer(startPosition: Int) {
@@ -299,7 +313,20 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                 .apply(GlideAppModule.optionsGlide)
                 .centerInside()
                 .override(width, height)
-                .into(imageView)
+                .into(object : CustomTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        imageView.setImageDrawable(resource)
+                        showProgress(false)
+                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+                        Log.e("DetailImage", "loader - Glide: ")
+                        showSnackRestartGlide(thumbnailImage, URL(searchImage))
+                    }
+                })
         }
     }
 

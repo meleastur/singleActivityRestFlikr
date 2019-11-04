@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 open class Description {
     @SerializedName("_content")
-    lateinit var content: String
+    var content: String = ""
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="neg_xx_large">-32dp</dimen>
+    <dimen name="neg_x_large">-28dp</dimen>
+    <dimen name="x_small">2dp</dimen>
+    <dimen name="small">4dp</dimen>
+    <dimen name="medium">8dp</dimen>
+    <dimen name="x_medium">12dp</dimen>
+    <dimen name="large">16dp</dimen>
+    <dimen name="x_large">24dp</dimen>
+    <dimen name="xx_large">32dp</dimen>
+
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+
+    <integer name="anim_duration_in">750</integer>
+    <integer name="anim_duration_out">750</integer>
+
+    <dimen name="progressBar_elevation">30dp</dimen>
+
+    <dimen name="image_height_card_items">92dp</dimen>
+
+    <dimen name="image_minHeight_detail">292dp</dimen>
+    <dimen name="image_maxHeight_detail">436dp</dimen>
+
+    <integer name="glide_transition">500</integer>
+
+
+</resources>

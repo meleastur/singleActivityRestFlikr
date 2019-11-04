@@ -9,9 +9,9 @@ import com.karumi.dexter.listener.single.BasePermissionListener
 import org.androidannotations.annotations.EBean
 
 @EBean
-open class PermisionHelper {
+open class PermissionHelper {
 
-    fun askForWriteStorage(activity: Activity, callback: GenericCallback) {
+    fun askForWriteStorage(activity: Activity, callback: VoidCallback) {
         val listener = object : BasePermissionListener() {
             override fun onPermissionGranted(response: PermissionGrantedResponse?) {
                 callback.onSuccess()
@@ -29,5 +29,4 @@ open class PermisionHelper {
             .withListener(listener)
             .check()
     }
-
 }

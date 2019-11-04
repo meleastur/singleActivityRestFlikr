@@ -6,20 +6,88 @@ apply plugin: "kotlin-allopen"
 
 android {
     compileSdkVersion 29
+
+    def codeVersion = 1
+    def oldCode = 1
+    def runTasks = gradle.startParameter.taskNames
+    println('RUNING TASKS: ' + runTasks)
+
+    // SigningConfigs automatically
+    println(runTasks + ' - SigningConfigs automatically')
+    def keystorePropsFile = file('keystore.properties')
+    if (keystorePropsFile.canRead()) {
+        Properties keystoreProps = new Properties()
+
+        keystoreProps.load(new FileInputStream(keystorePropsFile))
+
+        def keyAliasValue = keystoreProps['KEY_ALIAS']
+        def keyPasswordValue = keystoreProps['KEY_PASSWORD']
+        def storeFileValue = keystoreProps['STORE_FILE']
+        def storePasswordValue = keystoreProps['STORE_PASSWORD']
+
+        signingConfigs {
+            releaseSign {
+                keyAlias keyAliasValue
+                keyPassword keyPasswordValue
+                storeFile file(storeFileValue)
+                storePassword storePasswordValue
+            }
+        }
+    } else {
+        throw new GradleException("Could not read keystore.properties!")
+    }
+
+    // Manage version code
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+        oldCode = versionProps['VERSION_CODE'].toInteger()
+
+        if (':app:assembleRelease' in runTasks) {
+            // Autoincrement of version code
+            println(runTasks + ' Autoincrement of version code')
+            codeVersion = oldCode + 1
+            println(' * VersionCode for release: ' + oldCode)
+        } else {
+            // Keep version code
+            println(' * VersionCode for debug: ' + oldCode)
+            codeVersion = oldCode
+        }
+
+        if (codeVersion.toInteger() != oldCode.toInteger()) {
+            println('CHANGING VERSION CODE')
+            versionProps['VERSION_CODE'] = codeVersion.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
+    } else {
+        throw new GradleException("Could not read version.properties!")
+    }
+
     defaultConfig {
         applicationId "com.meleastur.singleactivityrestflikr"
-        minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdkVersion minVersion
+        targetSdkVersion targetSDK
+        versionCode codeVersion
+        versionName nameVersion
         vectorDrawables.useSupportLibrary = true
     }
+
     buildTypes {
         debug {
         }
+        integ {
+            initWith debug
+            signingConfig signingConfigs.releaseSign
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
 
         release {
+            signingConfig signingConfigs.releaseSign
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -57,7 +125,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger2_version"
     kapt "com.google.dagger:dagger-compiler:$dagger2_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
-    annotationProcessor "com.google.dagger:dagger-compiler:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'javax.inject:javax.inject:1'
 
@@ -66,7 +134,10 @@ dependencies {
 
     // glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
-    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+    compile("com.github.bumptech.glide:okhttp3-integration:$glide_version") {
+        exclude group: 'glide-parent'
+    }
 
     // StfalconImageViewer
     implementation "com.github.stfalcon:stfalcon-imageviewer:$stfalcon_version"
@@ -88,4 +159,5 @@ dependencies {
 
 kapt {
     generateStubs = true
+    correctErrorTypes = true
 }

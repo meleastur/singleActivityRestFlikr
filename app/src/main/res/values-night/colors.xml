@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1A237E</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#AAAAAA</color>
+
+    <color name="gray_light">#000000</color>
+    <color name="gray_medium">#AAAAAA</color>
+    <color name="gray_dark">#DDDDDD</color>
+
+    <color name="text_body2">#CCCCCC</color>
+
+    <color name="share_button">#1A237E</color>
+</resources>

@@ -1,7 +1,9 @@
 package com.meleastur.singleactivityrestflikr.ui.detail_image
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -10,26 +12,27 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
+import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.util.Constants
-import com.meleastur.singleactivityrestflikr.util.GenericCallback
-import com.meleastur.singleactivityrestflikr.util.PermisionHelper
-import com.meleastur.singleactivityrestflikr.util.Utils
+import com.meleastur.singleactivityrestflikr.util.*
 import com.stfalcon.imageviewer.StfalconImageViewer
 import org.androidannotations.annotations.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.net.URL
 import javax.inject.Inject
 
@@ -40,21 +43,30 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @Inject
     lateinit var presenter: DetailImageContract.Presenter
 
+    @Bean
+    protected lateinit var networkInformer: NetworkInformer
+
     private var listener: DetailImageFragmentInteractor? = null
 
     // ==============================
     // region FragmentArg
     // ==============================
     @FragmentArg
-    protected lateinit var searchImage: SearchImage
+    open lateinit var searchImage: SearchImage
 
     // endRegion
 
     // ==============================
     // region Views
     // ==============================
+    @ViewById(R.id.image_thumbnail_parent)
+    protected lateinit var thumbnailImageParent: RelativeLayout
+
+    @ViewById(R.id.item_card_layout_parent)
+    protected lateinit var relativeCardParent: RelativeLayout
+
     @ViewById(R.id.image_thumbnail)
-    protected lateinit var thumbnailImage: ImageView
+    protected lateinit var thumbnailImage: AppCompatImageView
 
     @ViewById(R.id.image_author)
     protected lateinit var author: TextView
@@ -71,11 +83,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @ViewById(R.id.image_description)
     protected lateinit var description: TextView
 
-    @ViewById(R.id.fab_share)
-    protected lateinit var fabShare: CardView
-
-    @ViewById(R.id.progressBar)
-    protected lateinit var progressBar: ProgressBar
+    @ViewById(R.id.cardView_share)
+    protected lateinit var cardViewShare: CardView
 
     // endregion
 
@@ -92,10 +101,10 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // endregion
 
     @Bean
-    protected lateinit var permisionHelper: PermisionHelper
+    protected lateinit var permissionHelper: PermissionHelper
 
     @Bean
-    protected lateinit var utils: Utils
+    protected lateinit var imageSharedSaver: ImageSharedSaver
 
     // ==============================
     // region Fragment
@@ -108,6 +117,13 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .build()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        EventBus.getDefault().register(this)
+        listener = context as DetailImageFragmentInteractor
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -117,36 +133,43 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         presenter.subscribe()
     }
 
+    @AfterViews
+    protected fun afterViews() {
+        listener?.onAfterView()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        listener = context as DetailImageFragmentInteractor
+        initViews()
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        showProgress(true)
+    fun initViews() {
         val urlImage = URL(searchImage.fullImageURL)
 
-        Glide.with(this)
+        GlideApp.with(this)
             .asBitmap()
             .load(urlImage)
-            .transition(withCrossFade())
+            .transition(BitmapTransitionOptions.withCrossFade())
+            .centerInside()
             .placeholder(R.drawable.ic_photo)
             .override(width, height)
-        .apply { Constants.optionsGlide }
-            .centerInside()
+            .apply { GlideModule.optionsGlide }
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(
                     resource: Bitmap,
                     transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
                 ) {
-                    showProgress(false)
-                    fabShare.visibility = View.VISIBLE
+                    thumbnailImageParent.visibility = View.VISIBLE
+                    relativeCardParent.visibility = View.VISIBLE
+                    cardViewShare.visibility = View.VISIBLE
+
                     bitmap = resource
                     thumbnailImage.setImageBitmap(resource)
+                    // Precargamos el bitmap en memoria
+                    if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        imageSharedSaver.saveBitmap(
+                            activity!!, searchImage.fullImageURL, bitmap, null
+                        )
+                    }
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
@@ -164,24 +187,46 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         date.text = searchImage.date
 
         if (!TextUtils.isEmpty(searchImage.description)) {
+            description.visibility = View.VISIBLE
+            descriptionTitle.visibility = View.VISIBLE
             description.text = searchImage.description
         } else {
             description.visibility = View.GONE
-            descriptionTitle.visibility = View.INVISIBLE
+            descriptionTitle.visibility = View.GONE
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        thumbnailImage.setImageBitmap(null)
+        thumbnailImageParent.visibility = View.GONE
+        relativeCardParent.visibility = View.GONE
+        cardViewShare.visibility = View.GONE
         presenter.unsubscribe()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        EventBus.getDefault().unregister(this)
+        listener = null
     }
 
     // endregion
 
+
     // ==============================
-    // region SearchImagesContract.View
+    // region EventBus
     // ==============================
-    override fun shareImageSuccess(searchImage: ArrayList<SearchImage>) {
+    @Subscribe
+    fun OnDetailImageEvent(event: OnDetailImageEvent) {
+        if (::thumbnailImageParent.isInitialized) {
+            thumbnailImageParent.visibility = View.GONE
+            thumbnailImageParent.visibility = View.GONE
+            relativeCardParent.visibility = View.GONE
+            cardViewShare.visibility = View.GONE
+            searchImage = event.searchImage
+            initViews()
+        }
     }
 
     // endregion
@@ -192,6 +237,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     private fun injectDependency() {
         val component = DaggerFragmentComponent.builder()
             .fragmentModule(FragmentModule())
+            .preferencesModule(PreferencesModule(context!!))
             .build()
 
         component.inject(this)
@@ -201,15 +247,17 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
     // region Click
     // ==============================
-    @Click(R.id.image_thumbnail_parent)
+    @Click(R.id.image_thumbnail)
     fun clickThumbnailImage() {
-        openViewer(currentPosition)
+        listener?.onRequestOrientation(false)
+        cardViewShare.visibility = View.GONE
+        cardViewShare.post {
+            openViewer(currentPosition)
+        }
     }
 
-    @Click(R.id.fab_share)
+    @Click(R.id.cardView_share)
     fun clickShareButton() {
-        showProgress(true)
-
         askWriteStorage()
     }
 
@@ -221,8 +269,6 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Viewer de la imagen
     private fun openViewer(startPosition: Int) {
-        listener?.onRequestOrientation(false)
-
         val list = listOf(searchImage.fullImageURL)
         viewer = StfalconImageViewer.Builder<String>(activity, list, ::loader)
             .withHiddenStatusBar(false)
@@ -230,6 +276,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .withStartPosition(startPosition)
             .withDismissListener {
                 listener?.onRequestOrientation(true)
+                cardViewShare.visibility = View.VISIBLE
             }
             .withImageChangeListener {
                 currentPosition = it
@@ -241,10 +288,10 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // Loader de Glide
     private fun loader(imageView: ImageView, searchImage: String) {
         imageView.apply {
-            Glide.with(this)
+            GlideApp.with(this)
                 .load(searchImage)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .apply(Constants.optionsGlide)
+                .apply(GlideModule.optionsGlide)
                 .centerInside()
                 .override(width, height)
                 .into(imageView)
@@ -258,29 +305,34 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Permiso de escritura
     private fun askWriteStorage() {
-        permisionHelper.askForWriteStorage(activity!!, object : GenericCallback {
-            override fun onError(error: String) {
-                showProgress(false)
-
+        permissionHelper.askForWriteStorage(activity!!, object : VoidCallback {
+            override fun onError(error: String?) {
                 Toast.makeText(
-                    activity, R.string.share_image_error, Toast.LENGTH_SHORT
-                ).show()            }
+                    activity,
+                    "Se necesita el permiso para poder descargar la imagen",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
             override fun onSuccess() {
-                shareURLImage()
+                saveShareImage()
             }
         })
     }
 
     // Intent Compartir
-    @Background
-    open fun shareURLImage() {
-        showProgress(false)
+    open fun saveShareImage() {
+        imageSharedSaver.saveBitmap(activity!!, searchImage.fullImageURL, bitmap, object : GenericCallback<Uri?> {
+            override fun onSuccess(successObject: Uri?) {
+                if (successObject != null) {
+                    openShareActivity(successObject)
+                }
+            }
 
-        val bmpUri = utils.getLocalBitmapUri(activity!!, bitmap)
-        if (bmpUri != null) {
-            openShareActivity(bmpUri)
-        }
+            override fun onError(error: String?) {
+                return
+            }
+        })
     }
 
     @UiThread
@@ -288,30 +340,23 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
-        shareIntent.type = "image/*"
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.type = "image/png"
 
-        startActivity(Intent.createChooser(shareIntent, "Compartir con"))
+        startActivity(shareIntent)
     }
 
     private fun showSnackRestartGlide(imageView: ImageView, url: URL) {
         Snackbar
             .make(imageView, "Error en la descarga", Snackbar.LENGTH_LONG)
             .setAction("Reintentar") {
-                Glide.with(this)
+                GlideApp.with(this)
                     .load(url)
                     .override(1920, 1080)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply { Constants.optionsGlide }
+                    .apply { GlideModule.optionsGlide }
                     .into(imageView)
             }.show()
-    }
-
-    private fun showProgress(isToShow: Boolean) {
-        if (isToShow) {
-            progressBar.visibility = View.VISIBLE
-        } else {
-            progressBar.visibility = View.GONE
-        }
     }
 
     // endregion
@@ -321,6 +366,8 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
 
     interface DetailImageFragmentInteractor {
+        fun onAfterView()
+
         fun onRequestOrientation(isToPortrait: Boolean)
     }
     // endregion

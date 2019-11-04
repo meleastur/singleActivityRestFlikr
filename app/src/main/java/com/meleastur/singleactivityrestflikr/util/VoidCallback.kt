@@ -1,8 +1,8 @@
 package com.meleastur.singleactivityrestflikr.util
 
-interface GenericCallback<T> {
+interface VoidCallback {
 
-    fun onSuccess(successObject: T)
+    fun onSuccess()
 
     fun onError(error: String?)
 }

@@ -11,5 +11,5 @@ open class Images {
     var total: Int = 0
 
     @SerializedName("photo")
-    lateinit var photos: List<Image>
+    var photos: List<Image> = ArrayList()
 }

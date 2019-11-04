@@ -3,8 +3,8 @@ package com.meleastur.singleactivityrestflikr.model.flikrapi.search_images
 import com.google.gson.annotations.SerializedName
 
 open class Image {
-    lateinit var id: String
-    lateinit var title: String
+    var id: String = ""
+    var title: String =""
 
     // https://www.flickr.com/services/api/misc.urls.html
     // z	medium 640, 640 on longest side
@@ -14,17 +14,17 @@ open class Image {
     // b	large, 1024 on longest side
 
     @SerializedName("url_l")
-    lateinit var url_l: String
+     var url_l: String = ""
 
     @SerializedName("url_o")
-    lateinit var url_o: String
+     var url_o: String = ""
 
     @SerializedName("url_z")
-    lateinit var url_z: String
+     var url_z: String = ""
 
     @SerializedName("url_n")
-    lateinit var url_n: String
+     var url_n: String = ""
 
     @SerializedName("url_m")
-    lateinit var url_m: String
+     var url_m: String = ""
 }

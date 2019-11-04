@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_card_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,48 +14,50 @@
     <RelativeLayout
         android:id="@+id/item_parent"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="@dimen/image_height_card_items"
+        android:animateLayoutChanges="true"
         android:background="?attr/selectableItemBackgroundBorderless">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_thumbnail"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_width="@dimen/image_height_card_items"
+            android:layout_height="@dimen/image_height_card_items"
             android:layout_alignParentStart="true"
-            android:adjustViewBounds="true"
-            android:background="@null"
-            android:foregroundGravity="top"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/x_small"
+            android:layout_marginTop="@dimen/x_medium"
+            android:layout_marginBottom="@dimen/medium"
             app:srcCompat="@drawable/ic_photo" />
 
         <TextView
             android:id="@+id/image_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large"
-            android:layout_marginTop="@dimen/large"
+            android:layout_alignTop="@id/image_thumbnail"
+            android:layout_marginStart="@dimen/medium"
             android:layout_marginEnd="@dimen/large"
             android:layout_toEndOf="@+id/image_thumbnail"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_small" />
+            android:textColor="@color/text_body2"
+            android:textSize="@dimen/text_medium"
+            tools:text="prueba\nprueba\nprueba" />
 
         <TextView
             android:id="@+id/image_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_title"
-            android:layout_marginStart="@dimen/large"
+            android:layout_alignStart="@+id/image_title"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="@dimen/medium"
-            android:layout_marginEnd="@dimen/large"
-            android:layout_marginBottom="@dimen/x_small"
-            android:layout_toEndOf="@+id/image_thumbnail"
+            android:layout_marginEnd="@dimen/x_large"
+            android:layout_marginBottom="@dimen/x_medium"
             android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_small" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/text_body2"
+            android:textSize="@dimen/text_medium"
+            tools:text="prueba\nprueba\nprueba" />
 
     </RelativeLayout>
 

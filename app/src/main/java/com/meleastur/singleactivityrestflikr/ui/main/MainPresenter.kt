@@ -1,6 +1,5 @@
 package com.meleastur.singleactivityrestflikr.ui.main
 
-import android.widget.ImageView
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import io.reactivex.disposables.CompositeDisposable
 
@@ -21,7 +20,7 @@ class MainPresenter : MainContract.Presenter {
         view.showSearchImagesFragment()
     }
 
-    override fun showDetailImageFragment(searchImage: SearchImage, imageView: ImageView) {
-        view.showDetailImageFragment(searchImage, imageView)
+    override fun showDetailImageFragment(searchImage: SearchImage) {
+        view.showDetailImageFragment(searchImage)
     }
 }

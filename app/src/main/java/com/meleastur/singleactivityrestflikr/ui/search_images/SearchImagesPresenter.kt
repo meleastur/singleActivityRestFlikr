@@ -79,45 +79,70 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         isFinished: Boolean,
         isToAddMore: Boolean
     ) {
-        var subscribe = api.getPhotoInfo(API_KEY, photoId).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ photoInfoResponse: PhotoInfoResponse? ->
-                if (isFinished) {
+        if(!TextUtils.isEmpty(photoId)){
+            var subscribe = api.getPhotoInfo(API_KEY, photoId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ photoInfoResponse: PhotoInfoResponse? ->
+                    if (isFinished) {
 
-                    if (searchImageList.size > 0) {
-                        val searchImageListOrdered = ArrayList<SearchImage>()
-                        searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy({ it.page })))
-                        view.loadDataSuccess(searchImageListOrdered, isToAddMore)
-                    } else {
-                        view.showProgress(false)
-                        view.showEmptyDataError("No hay imágenes relacionadas a ese texto")
-                        view.showErrorMessage("No hay imágenes relacionadas a ese texto")
+                        if (searchImageList.size > 0) {
+                            val searchImageListOrdered = ArrayList<SearchImage>()
+                            searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy({ it.page })))
+                            view.loadDataSuccess(searchImageListOrdered, isToAddMore)
+                        } else {
+                            view.showProgress(false)
+                            view.showEmptyDataError("No hay imágenes relacionadas a ese texto")
+                            view.showErrorMessage("No hay imágenes relacionadas a ese texto")
+                        }
+
+                    } else if (isURLImagesOK(urlFullImage, urlFullImage)) {
+                        parseToSearchImages(
+                            photoInfoResponse!!,
+                            urlThumbnail,
+                            urlFullImage,
+                            title,
+                            page,
+                            perPage
+                        )
                     }
+                }, { error ->
+                    view.showProgress(false)
+                    view.showEmptyDataError(error.localizedMessage!!)
+                    view.showErrorMessage(error.localizedMessage!!)
+                })
 
+            subscriptions.add(subscribe)
+        }else{
+            if (isFinished) {
+
+                if (searchImageList.size > 0) {
+                    val searchImageListOrdered = ArrayList<SearchImage>()
+                    searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy({ it.page })))
+                    view.loadDataSuccess(searchImageListOrdered, isToAddMore)
                 } else {
-                    parseToSearchImages(
-                        photoInfoResponse!!,
-                        urlThumbnail,
-                        urlFullImage,
-                        title,
-                        page,
-                        perPage
-                    )
+                    view.showProgress(false)
+                    view.showEmptyDataError("No hay imágenes relacionadas a ese texto")
+                    view.showErrorMessage("No hay imágenes relacionadas a ese texto")
                 }
-            }, { error ->
-                view.showProgress(false)
-                view.showEmptyDataError(error.localizedMessage!!)
-                view.showErrorMessage(error.localizedMessage!!)
-            })
+            }
+        }
 
-        subscriptions.add(subscribe)
     }
 
-    // endregion
+// endregion
 
-    // ==============================
-    // region Private functions
-    // ==============================
+// ==============================
+// region Private functions
+// ==============================
+
+    private fun isImageOK(image: Image): Boolean {
+        if (TextUtils.isEmpty(image.id)) {
+            Log.e("SearchImagesPresenter", "isImageOK false $image")
+            return false
+        }
+
+        return true
+    }
 
     private fun parseIdToGetPhotoInfo(imageResponse: ImagesResponse, isToAddMore: Boolean) {
         var id: String = ""
@@ -128,17 +153,17 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         var perPage: Int = 0
 
         for (image in imageResponse.photos.photos) {
+            if (isImageOK(image)) {
+                id = image.id
+                title = image.title
+                page = imageResponse.photos.page
+                perPage = imageResponse.photos.photos.size - 1
 
-            id = image.id
-            title = image.title
-            page = imageResponse.photos.page
-            perPage = imageResponse.photos.photos.size - 1
+                urlThumbnail = parseToThumbnail(image)
+                urlFullImage = parseToFullImage(image)
 
-            urlThumbnail = parseToThumbnail(image)
-            urlFullImage = parseToFullImage(image)
-
-            getPhotoInfo(id, urlThumbnail, urlFullImage, title, page, perPage, false, isToAddMore)
-
+                getPhotoInfo(id, urlThumbnail, urlFullImage, title, page, perPage, false, isToAddMore)
+            }
         }
 
         getPhotoInfo(id, urlThumbnail, urlFullImage, title, page, perPage, true, isToAddMore)
@@ -260,6 +285,15 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         }
     }
 
+    private fun isURLImagesOK(urlThumbnail: String, urlFullImage: String): Boolean {
+        if (TextUtils.isEmpty(urlThumbnail) || TextUtils.isEmpty(urlFullImage)) {
+            Log.e("SearchImagesPresenter", "isURLImagesOK false")
+
+            return false
+        }
+        return true
+    }
+
     private fun parseToSearchImages(
         photoInfoResponse: PhotoInfoResponse,
         urlThumbnail: String,
@@ -268,26 +302,32 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         page: Int,
         perPage: Int
     ) {
+        var photoInfo = photoInfoResponse
         var searchImage = SearchImage()
-        searchImage.id = photoInfoResponse.photo.id
-        searchImage.author = photoInfoResponse.photo.owner.username
-        if (!TextUtils.isEmpty(photoInfoResponse.photo.owner.realname)) {
-            searchImage.author =
-                searchImage.author + " (" + photoInfoResponse.photo.owner.realname + ")"
+
+        if (!TextUtils.isEmpty(photoInfo.photo.id)) {
+            searchImage.id = photoInfo.photo.id
+
+            searchImage.author = photoInfo.photo.owner.username
+            if (!TextUtils.isEmpty(photoInfo.photo.owner.realname)) {
+                searchImage.author =
+                    searchImage.author + " (" + photoInfo.photo.owner.realname + ")"
+            }
+            searchImage.date = photoInfo.photo.dates.taken
+            searchImage.thumbnailURL = urlThumbnail
+            searchImage.fullImageURL = urlFullImage
+            searchImage.title = title
+
+            searchImage.description = photoInfo.photo.description.content
+
+            searchImage.page = page
+            searchImage.perPage = perPage
+
+            searchImageList.add(searchImage)
         }
-        searchImage.date = photoInfoResponse.photo.dates.taken
-        searchImage.thumbnailURL = urlThumbnail
-        searchImage.fullImageURL = urlFullImage
-        searchImage.title = title
 
-        searchImage.description = photoInfoResponse.photo.description.content
-
-        searchImage.page = page
-        searchImage.perPage = perPage
-
-        searchImageList.add(searchImage)
     }
 
-    // endregion
+// endregion
 
 }

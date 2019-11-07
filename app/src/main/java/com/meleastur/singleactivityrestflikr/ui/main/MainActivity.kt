@@ -10,23 +10,29 @@ import android.os.PersistableBundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerActivityComponent
 import com.meleastur.singleactivityrestflikr.di.module.MainActivityModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.ui.base.FakeEvent
+import com.meleastur.singleactivityrestflikr.ui.camera.CameraFragment
 import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
 import com.meleastur.singleactivityrestflikr.ui.detail_image.OnDetailImageEvent
 import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
+import com.meleastur.singleactivityrestflikr.util.Constants.Companion.CAMERA
 import com.meleastur.singleactivityrestflikr.util.Constants.Companion.DETAIL_IMAGE
 import com.meleastur.singleactivityrestflikr.util.Constants.Companion.SEARCH_IMAGES
-import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -37,20 +43,21 @@ import javax.inject.Inject
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_search_images)
 open class MainActivity : AppCompatActivity(), MainContract.View,
+    LifecycleOwner,
     SearchImagesFragment.SearchImagesInterector,
-    DetailImageFragment.DetailImageFragmentInteractor {
+    DetailImageFragment.DetailImageFragmentInteractor,
+    CameraFragment.CameraFragmentInteractor {
 
     @Inject
     lateinit var presenter: MainContract.Presenter
 
     @Bean
-    lateinit var preferencesHelper: PreferencesHelper
+    lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
 
     var lastSearchTitle = ""
     private var savedSearchImages: ArrayList<SearchImage>? = null
     private var actualImage: SearchImage? = null
     private var isNightModeOn = false
-
     // ==============================
     // region Views
     // ==============================
@@ -60,6 +67,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
     @ViewById(R.id.appBar)
     protected lateinit var appBarLayout: AppBarLayout
+
+    @ViewById(R.id.fab_open_camera)
+    protected lateinit var fabOpenCamera: FloatingActionButton
 
     @OptionsMenuItem(R.id.action_search)
     lateinit var actionSearch: MenuItem
@@ -74,6 +84,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     lateinit var actionAbout: MenuItem
 
     var isLoaded = false
+
     // endregion
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -81,10 +92,11 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         EventBus.getDefault().register(this)
     }
 
+
     override fun onResume() {
         super.onResume()
-
         if (!isLoaded) {
+
             isLoaded = true
             setSupportActionBar(toolbar)
             changeToolbarScroll(false)
@@ -98,7 +110,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 }
             }
 
-            isNightModeOn = preferencesHelper.getNightMode()
+            isNightModeOn = encrypEncryptPreferencesHelper.getNightMode()
             if (isNightModeOn) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {
@@ -107,10 +119,12 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
             injectDependency()
             presenter.attach(this)
+
+            showSearchImagesFragment()
         }
     }
 
-    // Para el atrás del DetailImageFragment
+    // Para el atrás del DetailFragment
     @OptionsItem(android.R.id.home)
     internal fun homeSelected() {
         onBackPressed()
@@ -119,8 +133,23 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     override fun onBackPressed() {
         val detailFragment = supportFragmentManager.findFragmentByTag(DETAIL_IMAGE)
         val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
+        val cameraFragment = supportFragmentManager.findFragmentByTag(CAMERA)
 
-        if (searchFragment != null && detailFragment != null) {
+        fabOpenCamera.visibility = View.VISIBLE
+        toolbar.isVisible = true
+
+        if (cameraFragment != null && searchFragment != null) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.animator.fade_in,
+                    R.animator.fade_out,
+                    R.animator.fade_in,
+                    R.animator.fade_out
+                )
+                .remove(cameraFragment)
+                .show(searchFragment)
+                .commit()
+        } else if (searchFragment != null && detailFragment != null) {
             changeToolbarScroll(false)
             appBarLayout.setExpanded(true)
 
@@ -144,7 +173,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                     R.animator.enter_from_left,
                     R.animator.fade_out
                 )
-                .hide(detailFragment)
+                .remove(detailFragment)
                 .show(searchFragment)
                 .commit()
         } else {
@@ -195,6 +224,21 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // endregion
 
     // ==============================
+    // region Click Fab CameraFragment
+    // ==============================
+    @Click(R.id.fab_open_camera)
+    fun onClickFabCamera() {
+        openCameraFragment()
+
+        toolbar.isVisible = false
+        fabOpenCamera.visibility = View.GONE
+
+    }
+
+
+    // endregion
+
+    // ==============================
     // region MainContract.View
     // ==============================
     override fun showSearchImagesFragment() {
@@ -233,7 +277,6 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 SearchImagesFragment().newInstance(), SEARCH_IMAGES
             )
             .commit()
-
     }
 
     override fun showDetailImageFragment(
@@ -242,6 +285,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
         val detailFragment = supportFragmentManager.findFragmentByTag(DETAIL_IMAGE)
 
+        fabOpenCamera.visibility = View.GONE
+
+        toolbar.isVisible = true
         changeToolbarScroll(false)
         appBarLayout.setExpanded(
             false
@@ -267,7 +313,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                     R.animator.exit_to_right
                 )
                 .hide(searchFragment!!)
-                .show(detailFragment).addToBackStack(null)
+                .show(detailFragment)
                 .commit()
 
             onAfterView()
@@ -284,8 +330,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 .add(
                     R.id.frameLayout,
                     DetailImageFragment().newInstance(searchImage), DETAIL_IMAGE
-                ).addToBackStack(null)
-                .commit()
+                ).commit()
         }
 
     }
@@ -313,7 +358,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     }
 
     override fun onNightModeClick(isToNightOn: Boolean) {
-        preferencesHelper.setNightMode(isToNightOn)
+        encrypEncryptPreferencesHelper.setNightMode(isToNightOn)
 
         if (isToNightOn) {
             actionNighMOde.title = getString(com.meleastur.singleactivityrestflikr.R.string.dark_theme_on)
@@ -354,6 +399,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
     // endregion
 
+    // ==============================
+    // region DetailFragmentFragment.Interactor
+    // ==============================
     fun changeToolbarScroll(isToScrolling: Boolean) {
         val params = toolbar.layoutParams as AppBarLayout.LayoutParams
         val appBarLayoutParams = appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
@@ -374,4 +422,28 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
+    // ==============================
+    // region métodos privados
+    // ==============================
+    private fun openCameraFragment() {
+        val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
+
+        if (searchFragment != null) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.animator.fade_in,
+                    R.animator.fade_out,
+                    R.animator.fade_in,
+                    R.animator.fade_out
+                )
+                .hide(searchFragment)
+                .add(
+                    R.id.frameLayout,
+                    CameraFragment().newInstance(), CAMERA
+                ).commit()
+        }
+    }
+
+
+    // endregion
 }

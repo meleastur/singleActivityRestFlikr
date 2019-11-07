@@ -9,7 +9,7 @@ class SearchImagesContract {
         fun showProgress(show: Boolean)
         fun showErrorMessage(error: String)
         fun showEmptyDataError(error: String)
-        fun hideEmptyData()
+        fun isEmptyData()
         fun loadDataSuccess(searchImage: ArrayList<SearchImage>, isToAddMore: Boolean)
     }
 

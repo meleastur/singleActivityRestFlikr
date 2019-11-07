@@ -171,7 +171,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                     if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED
                     ) {
-                        imageSharedSaver.saveBitmap(
+                        imageSharedSaver.saveBitmapCache(
                             activity!!, searchImage.fullImageURL, bitmap, object :
                                 GenericCallback<Uri?> {
                                 override fun onSuccess(successObject: Uri?) {}
@@ -318,6 +318,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                         imageView.setImageDrawable(resource)
                         showProgress(false)
                     }
+
                     override fun onLoadCleared(placeholder: Drawable?) {
                     }
 
@@ -355,7 +356,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Intent Compartir
     open fun saveShareImage() {
-        imageSharedSaver.saveBitmap(activity!!, searchImage.fullImageURL, bitmap, object :
+        imageSharedSaver.saveBitmapCache(activity!!, searchImage.fullImageURL, bitmap, object :
             GenericCallback<Uri?> {
             override fun onSuccess(successObject: Uri?) {
                 if (successObject != null) {
@@ -370,12 +371,15 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @UiThread
     open fun openShareActivity(bmpUri: Uri) {
         val shareIntent = Intent()
+        shareIntent.putExtra(Intent.EXTRA_TEXT, searchImage.fullImageURL)
+        shareIntent.putExtra(Intent.EXTRA_TITLE, getString(R.string.share_image_title))
+        // Lo de arriba es para Android Q SharesSheet
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        shareIntent.type = "image/png"
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        shareIntent.type = "image/*"
 
-        startActivity(shareIntent)
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image_title)))
     }
 
     private fun showSnackRestartGlide(imageView: ImageView, url: URL) {

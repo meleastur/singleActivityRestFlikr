@@ -23,6 +23,7 @@
     <string name="search_image_pagination2">Pág %1$s/%2$s</string>
     <string name="search_image_elements">Imágen %1$s/%2$s</string>
     <string name="share_button">COMPARTIR</string>
+    <string name="share_image_title">Compartir la imagen con</string>
 
     <!--ShareImage Errores-->
     <string name="share_image_error">Ha ocurrido un error, por favor inténtalo de nuevo más tarde</string>

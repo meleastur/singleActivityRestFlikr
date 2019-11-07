@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/gray_light">
+
+    <TextureView
+        android:id="@+id/view_finder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:visibility="visible" />
+
+    <SurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/image_taken"
+        android:layout_width="180dp"
+        android:layout_height="320dp"
+        android:visibility="gone"
+        android:animateLayoutChanges="true"
+        android:layout_alignParentStart="true"
+        android:maxWidth="270dp"
+        android:maxHeight="480dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/image_taken"
+        android:animateLayoutChanges="true"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabCustomSize="36dp"
+        app:rippleColor="@color/colorAccent_unfocused"
+        app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
+        android:background="@drawable/bg_blue_fab_camera"
+        android:padding="@dimen/medium"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/colorAccent" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/capture_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="@dimen/large"
+        android:layout_marginBottom="@dimen/x_medium"
+        android:animateLayoutChanges="true"
+        android:scaleType="centerCrop"
+        app:backgroundTint="@color/colorAccent"
+        app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
+        android:background="@drawable/bg_blue_fab_camera"
+        app:fabCustomSize="64dp"
+        android:padding="@dimen/medium"
+        app:rippleColor="@color/colorAccent_unfocused"
+        android:src="@drawable/ic_photo_camera"
+        app:tint="@color/colorPrimary" />
+
+</RelativeLayout>

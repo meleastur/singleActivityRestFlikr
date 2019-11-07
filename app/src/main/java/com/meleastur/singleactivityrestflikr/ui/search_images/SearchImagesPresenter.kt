@@ -42,7 +42,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         var subscribe = api.searchPhotos(API_KEY, text).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ imageResponse: ImagesResponse? ->
-                view.hideEmptyData()
+                view.isEmptyData()
                 parseIdToGetPhotoInfo(imageResponse!!, false)
             }, { error ->
                 view.showProgress(false)
@@ -58,7 +58,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         var subscribe = api.searchPhotosByPage(API_KEY, text, page).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ imageResponse: ImagesResponse? ->
-                view.hideEmptyData()
+                view.isEmptyData()
                 parseIdToGetPhotoInfo(imageResponse!!, true)
             }, { error ->
                 view.showProgress(false)

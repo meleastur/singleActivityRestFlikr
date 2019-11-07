@@ -4,18 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:fitsSystemWindows="false"
-    android:background="@color/gray_light">
+    android:background="@color/gray_light"
+    android:fitsSystemWindows="false">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
+            android:animateLayoutChanges="true"
             app:layout_collapseMode="pin"
             app:theme="@style/MyToolbar" />
 
@@ -25,6 +27,25 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_open_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/x_medium"
+        android:layout_marginBottom="@dimen/medium"
+        android:animateLayoutChanges="true"
+        android:scaleType="centerCrop"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabCustomSize="64dp"
+        app:rippleColor="@color/colorAccent_unfocused"
+        app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
+        android:background="@drawable/bg_blue_fab_camera"
+        android:padding="@dimen/medium"
+        app:srcCompat="@drawable/ic_photo_camera"
+        app:tint="@color/colorAccent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

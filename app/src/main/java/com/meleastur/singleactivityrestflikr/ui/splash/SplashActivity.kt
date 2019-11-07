@@ -8,7 +8,7 @@ import com.meleastur.singleactivityrestflikr.R.*
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity_
 import com.meleastur.singleactivityrestflikr.util.BiometricHelper
 import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
-import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.EActivity
@@ -21,11 +21,11 @@ import kotlin.concurrent.schedule
 open class SplashActivity : AppCompatActivity() {
 
     @Bean
-    protected lateinit var preferencesHelper: PreferencesHelper
+    protected lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
 
     @AfterViews
     protected fun afterViews() {
-        if (preferencesHelper.getIsBiometricLogin()) {
+        if (encrypEncryptPreferencesHelper.getIsBiometricLogin()) {
             BiometricHelper().tryAuthentication(this, object : VoidCallback {
                 override fun onSuccess() {
                     Log.d("Biometric", "Success")

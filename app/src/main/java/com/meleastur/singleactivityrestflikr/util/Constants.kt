@@ -6,6 +6,7 @@ class Constants {
         // Fragments Tags
         const val SEARCH_IMAGES = "SearchImagesFragment"
         const val DETAIL_IMAGE = "DetailImageFragment"
+        const val CAMERA = "CameraFragment"
 
         // Flikr API
         const val BASE_URL = "https://api.flickr.com"
@@ -13,7 +14,7 @@ class Constants {
         const val PHOTOS = REST_METHOD + "flickr.photos"
         const val URLS = "url_l, url_m, url_n, url_z, url_o"
         const val PER_PAGE = 50
-        const val JSON_CALLBACK_ ="nojsoncallback=1"
+        const val JSON_CALLBACK_ = "nojsoncallback=1"
         const val FORMAT_ = "format=json"
         const val API_KEY = "a6029c737643a460170bf87334b99896"
 

@@ -61,8 +61,8 @@ class BiometricHelper {
                 .setTitle(title)
                 .setSubtitle(subTitle)
                 .setDeviceCredentialAllowed(true)
-                .setConfirmationRequired(isConfirmRequired)
                 .setDescription(description)
+                .setConfirmationRequired(isConfirmRequired)
                 .build()
         } else {
             return BiometricPrompt.PromptInfo.Builder()
@@ -70,7 +70,6 @@ class BiometricHelper {
                 .setSubtitle(subTitle)
                 .setNegativeButtonText(cancelText!!)
                 .setConfirmationRequired(isConfirmRequired)
-                .setDescription(description)
                 .build()
         }
 

@@ -27,7 +27,7 @@ import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.model.SearchImage
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
 import com.meleastur.singleactivityrestflikr.util.NetworkInformer
-import com.meleastur.singleactivityrestflikr.util.preferences.PreferencesHelper
+import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
@@ -49,7 +49,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     protected lateinit var networkInformer: NetworkInformer
 
     @Bean
-    protected lateinit var preferencesHelper: PreferencesHelper
+    protected lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
 
     // ==============================
     // region Views
@@ -137,18 +137,31 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
     override fun onResume() {
         super.onResume()
-     /*   if (BuildConfig.DEBUG) {
-            showProgress(true)
-            isLoading = true
-            actualPerPage = 0
-            actualPage = 0
-            selectedText = "pizza"
-            presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
-        }*/
-        if(!TextUtils.isEmpty((activity as MainActivity).lastSearchTitle)){
+        /*   if (BuildConfig.DEBUG) {
+               showProgress(true)
+               isLoading = true
+               actualPerPage = 0
+               actualPage = 0
+               selectedText = "pizza"
+               presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
+           }*/
+
+        if (searchImageAdapter?.searchImageList != null){
+            if(searchImageAdapter?.searchImageList!!.isNotEmpty()) {
+                emptyStateParent.visibility = View.VISIBLE
+                imageError.visibility = View.VISIBLE
+                textError.visibility = View.VISIBLE
+            }
+        }else{
+            emptyStateParent.visibility = View.VISIBLE
+            imageError.visibility = View.VISIBLE
+            textError.visibility = View.VISIBLE
+        }
+
+        if (!TextUtils.isEmpty((activity as MainActivity).lastSearchTitle)) {
             presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
         }
-        isBiometricLoginOn = preferencesHelper.getIsBiometricLogin()
+        isBiometricLoginOn = encrypEncryptPreferencesHelper.getIsBiometricLogin()
     }
 
     override fun onDestroyView() {
@@ -210,7 +223,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         when (menuItem?.itemId) {
             R.id.action_biometric_login -> {
                 isBiometricLoginOn = !isBiometricLoginOn
-                preferencesHelper.setBiometricLogin(isBiometricLoginOn)
+                encrypEncryptPreferencesHelper.setBiometricLogin(isBiometricLoginOn)
                 menuItem.title = if (isBiometricLoginOn) {
                     getString(R.string.biometric_login_off)
                 } else {
@@ -261,7 +274,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         Log.e("Error", error)
     }
 
-    override fun hideEmptyData() {
+    override fun isEmptyData() {
         emptyStateParent.visibility = View.GONE
         imageError.visibility = View.GONE
         textError.visibility = View.GONE
@@ -340,7 +353,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     @Click(R.id.empty_state)
     fun onClickEmptyState() {
         if (actualPerPage != 0) {
-            hideEmptyData()
+            isEmptyData()
         }
     }
 
@@ -370,7 +383,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
         if (!TextUtils.isEmpty(query)) {
             showProgress(true)
-            hideEmptyData()
+            isEmptyData()
 
             searchMenuItem?.collapseActionView()
             val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

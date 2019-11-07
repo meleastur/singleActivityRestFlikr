@@ -5,7 +5,7 @@ import org.androidannotations.annotations.EBean
 import org.androidannotations.annotations.sharedpreferences.Pref
 
 @EBean
-open class PreferencesHelper {
+open class EncryptPreferencesHelper {
 
     @Pref
     protected lateinit var preferences: Preferences_

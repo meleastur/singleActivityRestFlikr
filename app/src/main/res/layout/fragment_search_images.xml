@@ -20,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/medium"
-        android:layout_marginEnd="@dimen/x_medium"
+        android:layout_marginStart="@dimen/x_medium"
         android:animateLayoutChanges="true"
         android:foregroundGravity="center"
         android:visibility="gone"
@@ -48,6 +48,7 @@
         android:id="@+id/empty_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:background="@color/gray_light"
         android:padding="@dimen/large">
@@ -72,6 +73,8 @@
             android:textSize="@dimen/text_large" />
     </RelativeLayout>
 
+
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="52dp"
@@ -88,9 +91,9 @@
         android:id="@+id/item_card_element_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/x_medium"
+        android:layout_marginStart="@dimen/x_medium"
         android:layout_marginBottom="@dimen/medium"
         android:animateLayoutChanges="true"
         android:foregroundGravity="center"

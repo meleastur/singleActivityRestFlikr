@@ -30,4 +30,23 @@ open class PermissionHelper {
             .withListener(listener)
             .check()
     }
+
+    fun askForCamera(activity: Activity, callback: VoidCallback) {
+        val listener = object : BasePermissionListener() {
+            override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                callback.onSuccess()
+            }
+
+            override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                if (!response.isPermanentlyDenied) {
+                    callback.onError("DENIED")
+                }
+            }
+        }
+        Dexter
+            .withActivity(activity)
+            .withPermission(Manifest.permission.CAMERA)
+            .withListener(listener)
+            .check()
+    }
 }

@@ -105,9 +105,20 @@ open class CameraFragment : Fragment() {
 
         permissionHelper.askForCamera(activity!!, object : VoidCallback {
             override fun onSuccess() {
-                //toolbar.isVisible = false
-                listener?.onRequestOrientation(true)
-                startCamera()
+                permissionHelper.askForWriteStorage(activity!!, object : VoidCallback {
+                    override fun onSuccess() {
+                        //toolbar.isVisible = false
+                        listener?.onRequestOrientation(true)
+                        startCamera()
+                    }
+
+                    override fun onError(error: String?) {
+                        Toast.makeText(
+                            activity, "Permissions not granted by the user.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
             }
 
             override fun onError(error: String?) {

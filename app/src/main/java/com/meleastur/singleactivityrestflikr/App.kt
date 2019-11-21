@@ -5,7 +5,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.meleastur.singleactivityrestflikr.di.component.ApplicationComponent
 import com.meleastur.singleactivityrestflikr.di.component.DaggerApplicationComponent
-import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.EApplication
 

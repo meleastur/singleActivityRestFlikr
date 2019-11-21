@@ -22,13 +22,17 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
+import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
+import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
+import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
-import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.util.*
-import com.meleastur.singleactivityrestflikr.util.callback.GenericCallback
-import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
+import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
+import com.meleastur.singleactivityrestflikr.helper.network.NetworkHelper
+import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
+import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import com.stfalcon.imageviewer.StfalconImageViewer
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
@@ -44,7 +48,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     lateinit var presenter: DetailImageContract.Presenter
 
     @Bean
-    protected lateinit var networkInformer: NetworkInformer
+    protected lateinit var networkHelper: NetworkHelper
 
     private var listener: DetailImageFragmentInteractor? = null
 
@@ -107,7 +111,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     protected lateinit var permissionHelper: PermissionHelper
 
     @Bean
-    protected lateinit var imageSharedSaver: ImageSharedSaver
+    protected lateinit var imageHelper: ImageHelper
 
     // ==============================
     // region Fragment
@@ -171,7 +175,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                     if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED
                     ) {
-                        imageSharedSaver.saveBitmapCache(
+                        imageHelper.saveBitmapCache(
                             activity!!, searchImage.fullImageURL, bitmap, object :
                                 GenericCallback<Uri?> {
                                 override fun onSuccess(successObject: Uri?) {}
@@ -356,7 +360,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Intent Compartir
     open fun saveShareImage() {
-        imageSharedSaver.saveBitmapCache(activity!!, searchImage.fullImageURL, bitmap, object :
+        imageHelper.saveBitmapCache(activity!!, searchImage.fullImageURL, bitmap, object :
             GenericCallback<Uri?> {
             override fun onSuccess(successObject: Uri?) {
                 if (successObject != null) {

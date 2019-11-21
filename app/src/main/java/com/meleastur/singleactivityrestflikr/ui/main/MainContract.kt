@@ -1,7 +1,8 @@
 package com.meleastur.singleactivityrestflikr.ui.main
 
-import com.meleastur.singleactivityrestflikr.model.SearchImage
+
 import com.meleastur.singleactivityrestflikr.ui.base.BaseContract
+import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 
 class MainContract {
 

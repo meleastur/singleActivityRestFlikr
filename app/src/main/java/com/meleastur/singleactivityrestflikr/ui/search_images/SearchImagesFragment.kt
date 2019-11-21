@@ -24,10 +24,10 @@ import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
-import com.meleastur.singleactivityrestflikr.model.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.network.NetworkHelper
+import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
-import com.meleastur.singleactivityrestflikr.util.NetworkInformer
-import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
@@ -46,7 +46,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     lateinit var presenter: SearchImagesContract.Presenter
 
     @Bean
-    protected lateinit var networkInformer: NetworkInformer
+    protected lateinit var networkHelper: NetworkHelper
 
     @Bean
     protected lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
@@ -159,7 +159,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         }
 
         if (!TextUtils.isEmpty((activity as MainActivity).lastSearchTitle)) {
-            presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected(context!!))
         }
         isBiometricLoginOn = encrypEncryptPreferencesHelper.getIsBiometricLogin()
     }
@@ -339,7 +339,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         if (!isLoading) {
             showProgress(true)
             actualPage += 1
-            presenter.searchImageByText(selectedText!!, actualPage, networkInformer.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, actualPage, networkHelper.isWiFiConnected(context!!))
         }
 
     }
@@ -393,7 +393,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             isLoading = true
             actualPerPage = 0
             actualPage = 0
-            presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected(context!!))
 
             return true
         }

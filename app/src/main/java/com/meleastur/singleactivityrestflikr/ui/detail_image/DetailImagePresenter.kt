@@ -1,12 +1,12 @@
 package com.meleastur.singleactivityrestflikr.ui.detail_image
 
-import com.meleastur.singleactivityrestflikr.api.ApiFlikrServiceInterface
+import com.meleastur.singleactivityrestflikr.api.flikr.FlikrServiceApi
 import io.reactivex.disposables.CompositeDisposable
 
 class DetailImagePresenter : DetailImageContract.Presenter {
 
     private val subscriptions = CompositeDisposable()
-    private val api: ApiFlikrServiceInterface = ApiFlikrServiceInterface.create()
+    private val api: FlikrServiceApi = FlikrServiceApi.create()
     private lateinit var view: DetailImageContract.View
 
     // ==============================

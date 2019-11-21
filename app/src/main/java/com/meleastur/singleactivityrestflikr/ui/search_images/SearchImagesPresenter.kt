@@ -2,12 +2,13 @@ package com.meleastur.singleactivityrestflikr.ui.search_images
 
 import android.text.TextUtils
 import android.util.Log
-import com.meleastur.singleactivityrestflikr.api.ApiFlikrServiceInterface
-import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.model.flikrapi.photo_info.PhotoInfoResponse
-import com.meleastur.singleactivityrestflikr.model.flikrapi.search_images.Image
-import com.meleastur.singleactivityrestflikr.model.flikrapi.search_images.ImagesResponse
-import com.meleastur.singleactivityrestflikr.util.Constants.Companion.API_KEY
+
+import com.meleastur.singleactivityrestflikr.api.flikr.FlikrServiceApi
+import com.meleastur.singleactivityrestflikr.api.flikr.model.photo_info.PhotoInfoResponse
+import com.meleastur.singleactivityrestflikr.api.flikr.model.search_images.Image
+import com.meleastur.singleactivityrestflikr.api.flikr.model.search_images.ImagesResponse
+import com.meleastur.singleactivityrestflikr.common.constants.Constants.Companion.API_KEY
+import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -15,7 +16,7 @@ import io.reactivex.schedulers.Schedulers
 open class SearchImagesPresenter : SearchImagesContract.Presenter {
 
     private val subscriptions = CompositeDisposable()
-    private val api: ApiFlikrServiceInterface = ApiFlikrServiceInterface.create()
+    private val api: FlikrServiceApi = FlikrServiceApi.create()
     private lateinit var view: SearchImagesContract.View
     var searchImageList = ArrayList<SearchImage>()
     private var isWifiOn: Boolean = false
@@ -24,9 +25,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
     // region  SearchImagesContract.Presenter
     // ==============================
 
-    override fun subscribe() {
-
-    }
+    override fun subscribe() {}
 
     override fun unsubscribe() {
         subscriptions.clear()

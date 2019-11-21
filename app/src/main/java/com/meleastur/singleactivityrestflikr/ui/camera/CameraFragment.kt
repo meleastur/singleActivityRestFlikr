@@ -13,19 +13,19 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
+import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
+import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
+import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
+import com.meleastur.singleactivityrestflikr.helper.camera.CameraXHelper
+import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
+import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
+import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
-import com.meleastur.singleactivityrestflikr.util.GlideApp
-import com.meleastur.singleactivityrestflikr.util.GlideAppModule
-import com.meleastur.singleactivityrestflikr.util.ImageSharedSaver
-import com.meleastur.singleactivityrestflikr.util.PermissionHelper
-import com.meleastur.singleactivityrestflikr.util.callback.GenericCallback
-import com.meleastur.singleactivityrestflikr.util.callback.VoidCallback
-import com.meleastur.singleactivityrestflikr.util.camera.CameraXHelper
 import org.androidannotations.annotations.*
 
 
@@ -38,10 +38,13 @@ open class CameraFragment : Fragment() {
     lateinit var permissionHelper: PermissionHelper
 
     @Bean
-    protected lateinit var imageSharedSaver: ImageSharedSaver
+    protected lateinit var imageHelper: ImageHelper
 
     @Bean
     lateinit var cameraXHelper: CameraXHelper
+
+    @Bean
+    lateinit var snackBarHelper: SnackBarHelper
 
     // ==============================
     // region Views
@@ -150,7 +153,7 @@ open class CameraFragment : Fragment() {
     @Click(R.id.delete_button)
     fun deleteImageTaken() {
         if (takenBitmapUri != null) {
-            imageSharedSaver.deleteFileExternalStorage(activity!!, takenBitmapUri!!,
+            imageHelper.deleteFileExternalStorage(activity!!, takenBitmapUri!!,
                 object : VoidCallback {
                     override fun onSuccess() {
                         takenBitmapUri = null
@@ -166,8 +169,7 @@ open class CameraFragment : Fragment() {
 
     @UiThread
     open fun showSuccessDelete() {
-        Snackbar.make(imageViewTaken, "Borrada correctamente", Snackbar.LENGTH_LONG).show()
-
+        snackBarHelper.makeDefaultSnack(imageViewTaken, "Borrada correctamente", true)
         deleteButton.visibility = View.GONE
         imageViewTaken.visibility = View.GONE
     }
@@ -194,10 +196,7 @@ open class CameraFragment : Fragment() {
             override fun onSuccess(successObject: Uri?) {
                 if (successObject != null) {
                     takenBitmapUri = successObject
-                    Snackbar.make(
-                        imageViewTaken, "Guardada correctamente",
-                        Snackbar.LENGTH_LONG
-                    ).show()
+                    snackBarHelper.makeDefaultSnack(imageViewTaken, "Guardada correctamente", true)
                 } else {
                     Log.e("imageSharedSaver", "taken takenBitmapUri null")
                 }
@@ -213,7 +212,7 @@ open class CameraFragment : Fragment() {
                 showImageTaken(successObject)
 
                 val fileName = "taken_" + System.currentTimeMillis() + ".png"
-                imageSharedSaver.saveBitmapExternalStorage(activity!!, fileName, successObject, saveImageCallback)
+                imageHelper.saveBitmapExternalStorage(activity!!, fileName, successObject, saveImageCallback)
             }
 
             override fun onError(error: String?) {

@@ -1,8 +1,8 @@
 package com.meleastur.singleactivityrestflikr.di.module
 
 import android.content.Context
-import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper
-import com.meleastur.singleactivityrestflikr.util.preferences.EncryptPreferencesHelper_
+import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper_
 import dagger.Module
 import dagger.Provides
 

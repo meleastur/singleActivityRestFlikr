@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
-import com.meleastur.singleactivityrestflikr.model.SearchImage
-import com.meleastur.singleactivityrestflikr.util.GlideApp
-import com.meleastur.singleactivityrestflikr.util.GlideAppModule
+import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
+import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import java.net.URL
 
 

@@ -24,6 +24,9 @@ open class SplashActivity : AppCompatActivity() {
     protected lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
 
     @Bean
+    protected lateinit var biometricHelper: BiometricHelper
+
+    @Bean
     protected lateinit var snackHelper: SnackBarHelper
 
     private var timer: TimerTask? = null
@@ -31,21 +34,25 @@ open class SplashActivity : AppCompatActivity() {
     @AfterViews
     protected fun afterViews() {
         if (encrypEncryptPreferencesHelper.getIsBiometricLogin()) {
-            BiometricHelper()
-                .tryAuthentication(this, object : VoidCallback {
-                    override fun onSuccess() {
-                        Log.d("Biometric", "Success")
-                        snackHelper.makeDefaultSnack(findViewById(id.frameLayout),
-                            getString(string.biometric_success), false)
-                        initMainAcitivityTask()
-                    }
-                    override fun onError(error: String?) {
-                        Log.d("Biometric", "error $error")
-                        snackHelper.makeDefaultSnack(findViewById(id.frameLayout),
-                            error!!, false)
-                        initMainAcitivityTask()
-                    }
-                })
+            biometricHelper.tryAuthentication(this, object : VoidCallback {
+                override fun onSuccess() {
+                    Log.d("Biometric", "Success")
+                    snackHelper.makeDefaultSnack(
+                        findViewById(id.frameLayout),
+                        getString(string.biometric_success), false
+                    )
+                    initMainAcitivityTask()
+                }
+
+                override fun onError(error: String?) {
+                    Log.d("Biometric", "error $error")
+                    snackHelper.makeDefaultSnack(
+                        findViewById(id.frameLayout),
+                        error!!, false
+                    )
+                    initMainAcitivityTask()
+                }
+            })
         } else {
             Log.d("Biometric", "Deasctivate by user preferences")
             initMainAcitivityTask()
@@ -66,7 +73,7 @@ open class SplashActivity : AppCompatActivity() {
     // ==============================
     // region metodos privados
     // ==============================
-    private fun initMainAcitivityTask(){
+    private fun initMainAcitivityTask() {
         timer = Timer("navigateMain", false).schedule(800) {
             navigateMain()
         }

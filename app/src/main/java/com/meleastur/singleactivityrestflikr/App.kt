@@ -43,8 +43,7 @@ open class App : Application() {
     // ==============================
     // region Dagger
     // ==============================
-
-    fun initApp() {
+    private fun initApp() {
         component = DaggerApplicationComponent.builder().build()
         component.inject(this)
     }

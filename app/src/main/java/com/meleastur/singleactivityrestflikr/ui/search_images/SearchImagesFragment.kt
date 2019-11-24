@@ -98,8 +98,8 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
     var searchImage: ArrayList<SearchImage>? = null
 
-    var isNightModeOn: Boolean = false
-    var isBiometricLoginOn: Boolean = false
+    private var isNightModeOn: Boolean = false
+    private var isBiometricLoginOn: Boolean = false
     // endregion
 
     // ==============================
@@ -146,13 +146,13 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
                presenter.searchImageByText(selectedText!!, networkInformer.isWiFiConnected(context!!))
            }*/
 
-        if (searchImageAdapter?.searchImageList != null){
-            if(searchImageAdapter?.searchImageList!!.isNotEmpty()) {
+        if (searchImageAdapter?.searchImageList != null) {
+            if (searchImageAdapter?.searchImageList!!.isNotEmpty()) {
                 emptyStateParent.visibility = View.VISIBLE
                 imageError.visibility = View.VISIBLE
                 textError.visibility = View.VISIBLE
             }
-        }else{
+        } else {
             emptyStateParent.visibility = View.VISIBLE
             imageError.visibility = View.VISIBLE
             textError.visibility = View.VISIBLE
@@ -378,7 +378,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // region SearchView.OnQueryTextListener
     // ==============================
 
-    var selectedTextSavedList = ArrayList<String>()
+    private var selectedTextSavedList = ArrayList<String>()
     override fun onQueryTextSubmit(query: String?): Boolean {
 
         if (!TextUtils.isEmpty(query)) {

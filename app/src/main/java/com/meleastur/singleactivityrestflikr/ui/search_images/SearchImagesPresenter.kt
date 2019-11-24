@@ -18,7 +18,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
     private val subscriptions = CompositeDisposable()
     private val api: FlikrServiceApi = FlikrServiceApi.create()
     private lateinit var view: SearchImagesContract.View
-    var searchImageList = ArrayList<SearchImage>()
+    private var searchImageList = ArrayList<SearchImage>()
     private var isWifiOn: Boolean = false
 
     // ==============================
@@ -38,7 +38,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
     override fun searchImageByText(text: String, isWifiOn: Boolean) {
         this.isWifiOn = isWifiOn
         searchImageList.clear()
-        var subscribe = api.searchPhotos(API_KEY, text).subscribeOn(Schedulers.io())
+        val subscribe = api.searchPhotos(API_KEY, text).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ imageResponse: ImagesResponse? ->
                 view.isEmptyData()
@@ -54,7 +54,7 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
 
     override fun searchImageByText(text: String, page: Int, isWifiOn: Boolean) {
         this.isWifiOn = isWifiOn
-        var subscribe = api.searchPhotosByPage(API_KEY, text, page).subscribeOn(Schedulers.io())
+        val subscribe = api.searchPhotosByPage(API_KEY, text, page).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ imageResponse: ImagesResponse? ->
                 view.isEmptyData()
@@ -78,15 +78,15 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         isFinished: Boolean,
         isToAddMore: Boolean
     ) {
-        if(!TextUtils.isEmpty(photoId)){
-            var subscribe = api.getPhotoInfo(API_KEY, photoId).subscribeOn(Schedulers.io())
+        if (!TextUtils.isEmpty(photoId)) {
+            val subscribe = api.getPhotoInfo(API_KEY, photoId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ photoInfoResponse: PhotoInfoResponse? ->
                     if (isFinished) {
 
                         if (searchImageList.size > 0) {
                             val searchImageListOrdered = ArrayList<SearchImage>()
-                            searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy({ it.page })))
+                            searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy { it.page }))
                             view.loadDataSuccess(searchImageListOrdered, isToAddMore)
                         } else {
                             view.showProgress(false)
@@ -111,12 +111,12 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
                 })
 
             subscriptions.add(subscribe)
-        }else{
+        } else {
             if (isFinished) {
 
                 if (searchImageList.size > 0) {
                     val searchImageListOrdered = ArrayList<SearchImage>()
-                    searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy({ it.page })))
+                    searchImageListOrdered.addAll(searchImageList.sortedWith(compareBy { it.page }))
                     view.loadDataSuccess(searchImageListOrdered, isToAddMore)
                 } else {
                     view.showProgress(false)
@@ -144,12 +144,12 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
     }
 
     private fun parseIdToGetPhotoInfo(imageResponse: ImagesResponse, isToAddMore: Boolean) {
-        var id: String = ""
-        var urlThumbnail: String = ""
-        var urlFullImage: String = ""
-        var title: String = ""
-        var page: Int = 0
-        var perPage: Int = 0
+        var id = ""
+        var urlThumbnail = ""
+        var urlFullImage = ""
+        var title = ""
+        var page = 0
+        var perPage = 0
 
         for (image in imageResponse.photos.photos) {
             if (isImageOK(image)) {
@@ -301,23 +301,22 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         page: Int,
         perPage: Int
     ) {
-        var photoInfo = photoInfoResponse
-        var searchImage = SearchImage()
+        val searchImage = SearchImage()
 
-        if (!TextUtils.isEmpty(photoInfo.photo.id)) {
-            searchImage.id = photoInfo.photo.id
+        if (!TextUtils.isEmpty(photoInfoResponse.photo.id)) {
+            searchImage.id = photoInfoResponse.photo.id
 
-            searchImage.author = photoInfo.photo.owner.username
-            if (!TextUtils.isEmpty(photoInfo.photo.owner.realname)) {
+            searchImage.author = photoInfoResponse.photo.owner.username
+            if (!TextUtils.isEmpty(photoInfoResponse.photo.owner.realname)) {
                 searchImage.author =
-                    searchImage.author + " (" + photoInfo.photo.owner.realname + ")"
+                    searchImage.author + " (" + photoInfoResponse.photo.owner.realname + ")"
             }
-            searchImage.date = photoInfo.photo.dates.taken
+            searchImage.date = photoInfoResponse.photo.dates.taken
             searchImage.thumbnailURL = urlThumbnail
             searchImage.fullImageURL = urlFullImage
             searchImage.title = title
 
-            searchImage.description = photoInfo.photo.description.content
+            searchImage.description = photoInfoResponse.photo.description.content
 
             searchImage.page = page
             searchImage.perPage = perPage

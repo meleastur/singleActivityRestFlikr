@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/gray_light"
     android:fitsSystemWindows="false">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -38,13 +37,13 @@
         android:layout_marginEnd="@dimen/x_medium"
         android:layout_marginBottom="@dimen/medium"
         android:animateLayoutChanges="true"
+        android:background="@drawable/bg_blue_fab_camera"
+        android:padding="@dimen/medium"
         android:scaleType="centerCrop"
         app:backgroundTint="@color/colorPrimary"
         app:fabCustomSize="64dp"
         app:rippleColor="@color/colorAccent_unfocused"
         app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
-        android:background="@drawable/bg_blue_fab_camera"
-        android:padding="@dimen/medium"
         app:srcCompat="@drawable/ic_photo_camera"
         app:tint="@color/colorAccent" />
 

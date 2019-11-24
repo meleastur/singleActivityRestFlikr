@@ -83,7 +83,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     @OptionsMenuItem(R.id.action_about)
     lateinit var actionAbout: MenuItem
 
-    var isLoaded = false
+    private var isLoaded = false
 
     // endregion
 
@@ -361,9 +361,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         encrypEncryptPreferencesHelper.setNightMode(isToNightOn)
 
         if (isToNightOn) {
-            actionNighMOde.title = getString(com.meleastur.singleactivityrestflikr.R.string.dark_theme_on)
+            actionNighMOde.title = getString(R.string.dark_theme_on)
         } else {
-            actionNighMOde.title = getString(com.meleastur.singleactivityrestflikr.R.string.dark_theme_off)
+            actionNighMOde.title = getString(R.string.dark_theme_off)
         }
 
         recreate()
@@ -402,7 +402,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // ==============================
     // region DetailFragmentFragment.Interactor
     // ==============================
-    fun changeToolbarScroll(isToScrolling: Boolean) {
+    private fun changeToolbarScroll(isToScrolling: Boolean) {
         val params = toolbar.layoutParams as AppBarLayout.LayoutParams
         val appBarLayoutParams = appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
 

@@ -11,7 +11,7 @@ class MainContract {
         fun showDetailImageFragment(searchImage: SearchImage)
     }
 
-    interface Presenter : BaseContract.Presenter<MainContract.View> {
+    interface Presenter : BaseContract.Presenter<View> {
         fun showDetailImageFragment(searchImage: SearchImage)
     }
 }

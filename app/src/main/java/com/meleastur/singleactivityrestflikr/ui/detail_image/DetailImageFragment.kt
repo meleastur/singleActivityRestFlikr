@@ -265,7 +265,6 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     @Click(R.id.image_thumbnail)
     fun clickThumbnailImage() {
         listener?.onRequestOrientation(false)
-        showProgress(true)
         cardViewShare.visibility = View.GONE
         cardViewShare.post {
             openViewer(currentPosition)
@@ -320,7 +319,6 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                 .into(object : CustomTarget<Drawable>() {
                     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                         imageView.setImageDrawable(resource)
-                        showProgress(false)
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {

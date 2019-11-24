@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:fitsSystemWindows="false"
-    android:background="@color/gray_light">
+    android:fitsSystemWindows="false">
 
     <RelativeLayout
         android:layout_width="match_parent"

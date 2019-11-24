@@ -9,8 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
+import org.androidannotations.annotations.EBean
 
-class BiometricHelper {
+@EBean
+open class BiometricHelper {
 
     private var biometricPrompt: BiometricPrompt? = null
     private var title: String = ""

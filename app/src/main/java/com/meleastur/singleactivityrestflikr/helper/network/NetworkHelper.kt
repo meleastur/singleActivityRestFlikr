@@ -15,10 +15,10 @@ open class NetworkHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.run {
                 cm.getNetworkCapabilities(cm.activeNetwork)?.run {
-                    when {
-                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-                        else -> return false
+                    return when {
+                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
                     }
                 }
             }

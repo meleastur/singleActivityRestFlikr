@@ -147,7 +147,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         initViews()
     }
 
-    fun initViews() {
+    private fun initViews() {
         showProgress(true)
         val urlImage = URL(searchImage.fullImageURL)
 
@@ -162,7 +162,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(
                     resource: Bitmap,
-                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                    transition: Transition<in Bitmap>?
                 ) {
                     thumbnailImageParent.visibility = View.VISIBLE
                     relativeCardParent.visibility = View.VISIBLE
@@ -233,7 +233,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // region EventBus
     // ==============================
     @Subscribe
-    fun OnDetailImageEvent(event: OnDetailImageEvent) {
+    fun onDetailImageEvent(event: OnDetailImageEvent) {
         if (::thumbnailImageParent.isInitialized) {
             thumbnailImageParent.visibility = View.GONE
             thumbnailImageParent.visibility = View.GONE

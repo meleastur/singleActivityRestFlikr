@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
 import org.androidannotations.annotations.EBean
 import java.io.IOException
+import kotlin.math.abs
 
 
 @EBean
@@ -149,7 +150,7 @@ open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, Su
         if (camera != null) {
             camera!!.stopPreview()
         }
-        if(::bitmap.isInitialized){
+        if (::bitmap.isInitialized) {
             bitmap.recycle()
         }
         buttonCapture.visibility = View.GONE
@@ -216,10 +217,10 @@ open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, Su
         // Try to find an size match aspect ratio and size
         for (size in sizes) {
             val ratio = size.width.toDouble() / size.height
-            if (Math.abs(ratio - targetRatio) > aspectTolerance) continue
-            if (Math.abs(size.height - height) < minDiff) {
+            if (abs(ratio - targetRatio) > aspectTolerance) continue
+            if (abs(size.height - height) < minDiff) {
                 optimalSize = size
-                minDiff = Math.abs(size.height - height).toDouble()
+                minDiff = abs(size.height - height).toDouble()
             }
         }
 
@@ -227,9 +228,9 @@ open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, Su
         if (optimalSize == null) {
             minDiff = java.lang.Double.MAX_VALUE
             for (size in sizes) {
-                if (Math.abs(size.height - height) < minDiff) {
+                if (abs(size.height - height) < minDiff) {
                     optimalSize = size
-                    minDiff = Math.abs(size.height - height).toDouble()
+                    minDiff = abs(size.height - height).toDouble()
                 }
             }
         }

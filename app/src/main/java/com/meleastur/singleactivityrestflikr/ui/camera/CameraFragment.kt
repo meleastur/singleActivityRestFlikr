@@ -100,7 +100,7 @@ open class CameraFragment : Fragment() {
 
     }
 
-    fun initViews() {
+    private fun initViews() {
         if (takenBitmapUri == null) {
             deleteButton.visibility = View.GONE
             imageViewTaken.visibility = View.GONE
@@ -136,10 +136,6 @@ open class CameraFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         surfaceView.visibility = View.GONE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     override fun onDetach() {

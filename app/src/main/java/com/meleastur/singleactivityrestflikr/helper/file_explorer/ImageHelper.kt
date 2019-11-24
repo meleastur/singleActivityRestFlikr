@@ -28,10 +28,10 @@ open class ImageHelper {
             val uri: Uri?
             val tokensVal = URI(fullImageURL).path.split("/")
             var fileName = "simpleActivity_image_share_"
-            when {
-                tokensVal.size == 3 -> fileName += tokensVal[2]
-                tokensVal.size == 2 -> fileName += tokensVal[1]
-                tokensVal.size == 1 -> fileName += tokensVal[0]
+            when (tokensVal.size) {
+                3 -> fileName += tokensVal[2]
+                2 -> fileName += tokensVal[1]
+                1 -> fileName += tokensVal[0]
             }
             val file = File(activity.cacheDir, fileName)
 
@@ -55,10 +55,10 @@ open class ImageHelper {
             val uriAux = URI(fullImageURL)
             val tokensVal = uriAux.path.split("/")
             var fileName = "simpleActivity_image_share_"
-            when {
-                tokensVal.size == 3 -> fileName += tokensVal[2]
-                tokensVal.size == 2 -> fileName += tokensVal[1]
-                tokensVal.size == 1 -> fileName += tokensVal[0]
+            when (tokensVal.size) {
+                3 -> fileName += tokensVal[2]
+                2 -> fileName += tokensVal[1]
+                1 -> fileName += tokensVal[0]
             }
             val file = File(activity.cacheDir, fileName)
 
@@ -114,10 +114,10 @@ open class ImageHelper {
             val uriAux = fileName
             val tokensVal = uriAux.path?.split("/SimpleActivity taken/")
             var fileName = ""
-            when {
-                tokensVal?.size == 3 -> fileName = tokensVal[2]
-                tokensVal?.size == 2 -> fileName = tokensVal[1]
-                tokensVal?.size == 1 -> fileName = tokensVal[0]
+            when (tokensVal?.size) {
+                3 -> fileName = tokensVal[2]
+                2 -> fileName = tokensVal[1]
+                1 -> fileName = tokensVal[0]
             }
 
             val file = File(dirPath, fileName)

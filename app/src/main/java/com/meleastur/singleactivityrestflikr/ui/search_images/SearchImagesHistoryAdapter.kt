@@ -12,7 +12,7 @@ import com.meleastur.singleactivityrestflikr.R
 
 class SearchImagesHistoryAdapter(
     context: Context,
-    var searchImageList: ArrayList<String>,
+    private var searchImageList: ArrayList<String>,
     cursor: Cursor
 ) : CursorAdapter(context, cursor, true) {
 

@@ -4,25 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@color/gray_light">
+    android:animateLayoutChanges="true">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="match_parent"
         android:background="@color/gray_light"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/item_search_images" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_card_pag_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/medium"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/x_medium"
+        android:layout_marginTop="@dimen/medium"
         android:animateLayoutChanges="true"
         android:foregroundGravity="center"
         android:visibility="gone"
@@ -48,10 +47,10 @@
         android:id="@+id/empty_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_centerInParent="true"
         android:background="@color/gray_light"
-        android:padding="@dimen/large">
+        android:padding="@dimen/large"
+        android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_error"
@@ -72,7 +71,6 @@
             android:textColor="@color/gray_medium"
             android:textSize="@dimen/text_large" />
     </RelativeLayout>
-
 
 
     <ProgressBar

@@ -34,7 +34,7 @@ open class SplashActivity : AppCompatActivity() {
     @AfterViews
     protected fun afterViews() {
         if (encrypEncryptPreferencesHelper.getIsBiometricLogin()) {
-            biometricHelper.tryAuthentication(this, object : VoidCallback {
+            biometricHelper.tryAuthentication(object : VoidCallback {
                 override fun onSuccess() {
                     Log.d("Biometric", "Success")
                     snackHelper.makeDefaultSnack(

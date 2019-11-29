@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
 import org.androidannotations.annotations.EBean
+import org.androidannotations.annotations.RootContext
 import java.io.IOException
 import kotlin.math.abs
 
@@ -22,10 +23,12 @@ import kotlin.math.abs
 open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, SurfaceHolder.Callback,
     View.OnClickListener {
 
+    @RootContext
+    lateinit var activity: Activity
+
     private var width = 0
     private var height = 0
 
-    private lateinit var activity: Activity
     private lateinit var buttonCapture: ImageButton
     private lateinit var surfaceHolder: SurfaceHolder
     private lateinit var surfaceView: SurfaceView
@@ -43,11 +46,10 @@ open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, Su
     // ==============================
 
     fun startCamera(
-        activity: Activity, surfaceView: SurfaceView,
+        surfaceView: SurfaceView,
         buttonCapture: ImageButton, genericCallback: GenericCallback<Bitmap>
     ) {
         this.buttonCapture = buttonCapture
-        this.activity = activity
         this.surfaceView = surfaceView
         this.genericCallback = genericCallback
 
@@ -175,7 +177,7 @@ open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, Su
                 }
                 buttonCapture.setOnClickListener(this)
             } catch (e: Exception) {
-                Toast.makeText(activity, "Unable to open camera.", Toast.LENGTH_LONG)
+                Toast.makeText(this.activity, "Unable to open camera.", Toast.LENGTH_LONG)
                     .show()
                 genericCallback.onError("startCamera error")
                 closeCamera()

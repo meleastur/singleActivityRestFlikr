@@ -159,7 +159,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         }
 
         if (!TextUtils.isEmpty((activity as MainActivity).lastSearchTitle)) {
-            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected())
         }
         isBiometricLoginOn = encrypEncryptPreferencesHelper.getIsBiometricLogin()
     }
@@ -339,7 +339,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
         if (!isLoading) {
             showProgress(true)
             actualPage += 1
-            presenter.searchImageByText(selectedText!!, actualPage, networkHelper.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, actualPage, networkHelper.isWiFiConnected())
         }
 
     }
@@ -393,7 +393,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             isLoading = true
             actualPerPage = 0
             actualPage = 0
-            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected(context!!))
+            presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected())
 
             return true
         }

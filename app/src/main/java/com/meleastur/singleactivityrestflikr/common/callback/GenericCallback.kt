@@ -4,5 +4,5 @@ interface GenericCallback<T> {
 
     fun onSuccess(successObject: T)
 
-    fun onError(error: String?)
+    fun onError(error: String)
 }

@@ -29,22 +29,43 @@
         android:animateLayoutChanges="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_open_camera"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/x_medium"
-        android:layout_marginBottom="@dimen/medium"
         android:animateLayoutChanges="true"
-        android:background="@drawable/bg_blue_fab_camera"
-        android:padding="@dimen/medium"
-        android:scaleType="centerCrop"
-        app:backgroundTint="@color/colorPrimary"
-        app:fabCustomSize="64dp"
-        app:rippleColor="@color/colorAccent_unfocused"
-        app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
-        app:srcCompat="@drawable/ic_photo_camera"
-        app:tint="@color/colorAccent" />
+        android:orientation="vertical"
+        android:padding="@dimen/large">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_star_speech"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bg_blue_fab_camera"
+            android:scaleType="centerCrop"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabCustomSize="64dp"
+            app:rippleColor="@color/colorAccent_unfocused"
+            app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
+            app:srcCompat="@drawable/ic_mic"
+            app:tint="@color/colorAccent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_open_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bg_blue_fab_camera"
+            android:scaleType="centerCrop"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabCustomSize="64dp"
+            app:rippleColor="@color/colorAccent_unfocused"
+            app:shapeAppearanceOverlay="@drawable/bg_blue_fab_camera"
+            app:srcCompat="@drawable/ic_photo_camera"
+            app:tint="@color/colorAccent" />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

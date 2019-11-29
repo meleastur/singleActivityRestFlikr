@@ -1,17 +1,26 @@
 package com.meleastur.singleactivityrestflikr.helper.preferences
 
-import android.content.Context
-/*import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys*/
 import org.androidannotations.annotations.EBean
+
+/*import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
+import android.content.Context
+import org.androidannotations.annotations.EBean
+import org.androidannotations.annotations.RootContext */
 
 
 // SOLO SI MINSDK API 23 por:
 //  security
 //  implementation "androidx.security:security-crypto:$security_version"
 
+
+/*
+@RootContext
+lateinit var context: Context
+*/
+
 @EBean
-open class EncryptPreferencesHelperX(val context: Context)/* {
+open class EncryptPreferencesHelperX/* {
 
     private var editor: SharedPreferences.Editor? = null
     private var sharedPreferences: SharedPreferences? = null

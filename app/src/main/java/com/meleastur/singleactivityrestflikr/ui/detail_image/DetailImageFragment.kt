@@ -38,14 +38,9 @@ import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.net.URL
-import javax.inject.Inject
-
 
 @EFragment(R.layout.fragment_detail_image)
-open class DetailImageFragment : Fragment(), DetailImageContract.View {
-
-    @Inject
-    lateinit var presenter: DetailImageContract.Presenter
+open class DetailImageFragment : Fragment() {
 
     @Bean
     protected lateinit var networkHelper: NetworkHelper
@@ -135,14 +130,11 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         super.onCreate(savedInstanceState)
 
         injectDependency()
-
-        presenter.attach(this)
-        presenter.subscribe()
     }
 
     @AfterViews
     protected fun afterViews() {
-        listener?.onAfterView()
+        listener?.onDetailFragmentResume()
 
         initViews()
     }
@@ -175,12 +167,11 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                     if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED
                     ) {
-                        imageHelper.saveBitmapCache(
-                            activity!!, searchImage.fullImageURL, bitmap, object :
-                                GenericCallback<Uri?> {
-                                override fun onSuccess(successObject: Uri?) {}
-                                override fun onError(error: String?) {}
-                            })
+                        imageHelper.saveBitmapCache(searchImage.fullImageURL, bitmap, object :
+                            GenericCallback<Uri?> {
+                            override fun onSuccess(successObject: Uri?) {}
+                            override fun onError(error: String) {}
+                        })
                         showProgress(false)
                     } else {
                         showProgress(false)
@@ -217,7 +208,6 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
         thumbnailImageParent.visibility = View.GONE
         relativeCardParent.visibility = View.GONE
         cardViewShare.visibility = View.GONE
-        presenter.unsubscribe()
     }
 
     override fun onDetach() {
@@ -233,7 +223,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // region EventBus
     // ==============================
     @Subscribe
-    fun onDetailImageEvent(event: OnDetailImageEvent) {
+    fun onDetailImageEvent(event: DetailImageEvent) {
         if (::thumbnailImageParent.isInitialized) {
             thumbnailImageParent.visibility = View.GONE
             thumbnailImageParent.visibility = View.GONE
@@ -340,8 +330,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Permiso de escritura
     private fun askWriteStorage() {
-        permissionHelper.askForWriteStorage(activity!!, object :
-            VoidCallback {
+        permissionHelper.askForWriteStorage(object : VoidCallback {
             override fun onError(error: String?) {
                 Toast.makeText(
                     activity,
@@ -358,7 +347,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
 
     // Intent Compartir
     open fun saveShareImage() {
-        imageHelper.saveBitmapCache(activity!!, searchImage.fullImageURL, bitmap, object :
+        imageHelper.saveBitmapCache(searchImage.fullImageURL, bitmap, object :
             GenericCallback<Uri?> {
             override fun onSuccess(successObject: Uri?) {
                 if (successObject != null) {
@@ -366,7 +355,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
                 }
             }
 
-            override fun onError(error: String?) {}
+            override fun onError(error: String) {}
         })
     }
 
@@ -404,7 +393,7 @@ open class DetailImageFragment : Fragment(), DetailImageContract.View {
     // ==============================
 
     interface DetailImageFragmentInteractor {
-        fun onAfterView()
+        fun onDetailFragmentResume()
 
         fun onRequestOrientation(isToPortrait: Boolean)
     }

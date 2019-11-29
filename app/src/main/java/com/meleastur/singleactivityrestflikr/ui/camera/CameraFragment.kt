@@ -25,7 +25,6 @@ import com.meleastur.singleactivityrestflikr.helper.camera.CameraXHelper
 import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
-import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
 import org.androidannotations.annotations.*
 
 
@@ -106,9 +105,9 @@ open class CameraFragment : Fragment() {
             imageViewTaken.visibility = View.GONE
         }
 
-        permissionHelper.askForCamera(activity!!, object : VoidCallback {
+        permissionHelper.askForCamera(object : VoidCallback {
             override fun onSuccess() {
-                permissionHelper.askForWriteStorage(activity!!, object : VoidCallback {
+                permissionHelper.askForWriteStorage(object : VoidCallback {
                     override fun onSuccess() {
                         //toolbar.isVisible = false
                         listener?.onRequestOrientation(true)
@@ -149,7 +148,7 @@ open class CameraFragment : Fragment() {
     @Click(R.id.delete_button)
     fun deleteImageTaken() {
         if (takenBitmapUri != null) {
-            imageHelper.deleteFileExternalStorage(activity!!, takenBitmapUri!!,
+            imageHelper.deleteFileExternalStorage(takenBitmapUri!!,
                 object : VoidCallback {
                     override fun onSuccess() {
                         takenBitmapUri = null
@@ -198,7 +197,7 @@ open class CameraFragment : Fragment() {
                 }
             }
 
-            override fun onError(error: String?) {
+            override fun onError(error: String) {
                 Log.e("imageSharedSaver", "taken $error")
             }
         }
@@ -208,20 +207,17 @@ open class CameraFragment : Fragment() {
                 showImageTaken(successObject)
 
                 val fileName = "taken_" + System.currentTimeMillis() + ".png"
-                imageHelper.saveBitmapExternalStorage(activity!!, fileName, successObject, saveImageCallback)
+                imageHelper.saveBitmapExternalStorage(fileName, successObject, saveImageCallback)
             }
 
-            override fun onError(error: String?) {
+            override fun onError(error: String) {
                 Log.e("cameraXHelper", "taken  $error")
             }
         }
 
 
         surfaceView.visibility = View.VISIBLE
-        cameraXHelper.startCamera(
-            activity as MainActivity, null, surfaceView,
-            buttonCapture, takenCallback
-        )
+        cameraXHelper.startCamera(null, surfaceView, buttonCapture, takenCallback)
     }
 
     private fun showImageTaken(bitmap: Bitmap) {
@@ -243,7 +239,7 @@ open class CameraFragment : Fragment() {
     // ==============================
 
     interface CameraFragmentInteractor {
-        fun onAfterView()
+        //fun onCameraFragmentResume()
 
         fun onRequestOrientation(isToPortrait: Boolean)
     }

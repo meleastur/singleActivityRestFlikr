@@ -1,6 +1,5 @@
 package com.meleastur.singleactivityrestflikr.helper.camera
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.view.SurfaceView
 import android.view.TextureView
@@ -23,11 +22,11 @@ open class CameraXHelper {
     }
 */
     fun startCamera(
-        activity: Activity, viewFinder: TextureView?, surfaceView: SurfaceView,
+        viewFinder: TextureView?, surfaceView: SurfaceView,
         buttonCapture: ImageButton, genericCallback: GenericCallback<Bitmap>
     ) {
 
-        cameraPreLHelper.startCamera(activity, surfaceView, buttonCapture, genericCallback)
+        cameraPreLHelper.startCamera(surfaceView, buttonCapture, genericCallback)
 
         /*  if (isPreApi21) {
               CameraPreL().startCamera(activity, surfaceView, buttonCapture)

@@ -10,6 +10,7 @@ import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
 import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
 import org.androidannotations.annotations.Background
 import org.androidannotations.annotations.EBean
+import org.androidannotations.annotations.RootContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
@@ -17,13 +18,11 @@ import java.net.URI
 @EBean
 open class ImageHelper {
 
+    @RootContext
+    lateinit var activity: Activity
+
     @Background
-    open fun saveBitmapCache(
-        activity: Activity,
-        fullImageURL: String,
-        bitmap: Bitmap,
-        callback: GenericCallback<Uri?>
-    ) {
+    open fun saveBitmapCache(fullImageURL: String, bitmap: Bitmap, callback: GenericCallback<Uri?>) {
         try {
             val uri: Uri?
             val tokensVal = URI(fullImageURL).path.split("/")
@@ -45,12 +44,12 @@ open class ImageHelper {
             callback.onSuccess(uri)
         } catch (e: Exception) {
             Log.e("ImageSharedSaver", "Exception while trying to write file for sharing: " + e.message)
-            callback.onError(e.message)
+            callback.onError(e.message!!)
         }
     }
 
     @Background
-    open fun deleteBitmap(activity: Activity, fullImageURL: String, bitmap: Bitmap, callBack: VoidCallback) {
+    open fun deleteBitmap(fullImageURL: String, bitmap: Bitmap, callBack: VoidCallback) {
         try {
             val uriAux = URI(fullImageURL)
             val tokensVal = uriAux.path.split("/")
@@ -73,12 +72,7 @@ open class ImageHelper {
     }
 
     @Background
-    open fun saveBitmapExternalStorage(
-        activity: Activity,
-        fileName: String,
-        bitmap: Bitmap,
-        callback: GenericCallback<Uri?>
-    ) {
+    open fun saveBitmapExternalStorage(fileName: String, bitmap: Bitmap, callback: GenericCallback<Uri?>) {
         try {
             val uri: Uri?
             val dirExtPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
@@ -101,12 +95,12 @@ open class ImageHelper {
             callback.onSuccess(uri)
         } catch (e: Exception) {
             Log.e("ImageSharedSaver", "Exception while trying to write file for sharing: " + e.message)
-            callback.onError(e.message)
+            callback.onError(e.message!!)
         }
     }
 
     @Background
-    open fun deleteFileExternalStorage(activity: Activity, fileName: Uri, callBack: VoidCallback) {
+    open fun deleteFileExternalStorage(fileName: Uri, callBack: VoidCallback) {
         try {
             val dirExtPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
             val dirPath = "$dirExtPath/SimpleActivity taken/"

@@ -20,17 +20,22 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.meleastur.singleactivityrestflikr.R
+import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
+import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
 import com.meleastur.singleactivityrestflikr.common.constants.Constants.Companion.CAMERA
 import com.meleastur.singleactivityrestflikr.common.constants.Constants.Companion.DETAIL_IMAGE
 import com.meleastur.singleactivityrestflikr.common.constants.Constants.Companion.SEARCH_IMAGES
 import com.meleastur.singleactivityrestflikr.di.component.DaggerActivityComponent
 import com.meleastur.singleactivityrestflikr.di.module.MainActivityModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
+import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
+import com.meleastur.singleactivityrestflikr.helper.speechToText.STTHelper
 import com.meleastur.singleactivityrestflikr.ui.base.FakeEvent
 import com.meleastur.singleactivityrestflikr.ui.camera.CameraFragment
+import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageEvent
 import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
-import com.meleastur.singleactivityrestflikr.ui.detail_image.OnDetailImageEvent
 import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
 import org.androidannotations.annotations.*
@@ -53,6 +58,12 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
     @Bean
     lateinit var encrypEncryptPreferencesHelper: EncryptPreferencesHelper
+
+    @Bean
+    lateinit var sttHelper: STTHelper
+
+    @Bean
+    protected lateinit var permissionHelper: PermissionHelper
 
     var lastSearchTitle = ""
     private var savedSearchImages: ArrayList<SearchImage>? = null
@@ -87,11 +98,14 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
     // endregion
 
+    // ==============================
+    // region Activity
+    // ==============================
+
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         EventBus.getDefault().register(this)
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -224,17 +238,19 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // endregion
 
     // ==============================
-    // region Click Fab CameraFragment
+    // region Click Fab
     // ==============================
     @Click(R.id.fab_open_camera)
     fun onClickFabCamera() {
         openCameraFragment()
-
         toolbar.isVisible = false
         fabOpenCamera.visibility = View.GONE
-
     }
 
+    @Click(R.id.fab_star_speech)
+    fun onClickFabSpeech() {
+        startSpeech()
+    }
 
     // endregion
 
@@ -316,7 +332,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 .show(detailFragment)
                 .commit()
 
-            onAfterView()
+            onDetailFragmentResume()
         } else {
 
             supportFragmentManager.beginTransaction()
@@ -391,9 +407,10 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
-    override fun onAfterView() {
+
+    override fun onDetailFragmentResume() {
         if (actualImage != null) {
-            EventBus.getDefault().post(OnDetailImageEvent(actualImage!!))
+            EventBus.getDefault().post(DetailImageEvent(actualImage!!))
         }
     }
 
@@ -444,6 +461,25 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
+    private fun startSpeech() {
+        sttHelper.makeSpeechInput(object : GenericCallback<String> {
+            override fun onSuccess(successObject: String) {
+                SnackBarHelper().makeDefaultSnack(toolbar, successObject, true)
+            }
 
+            override fun onError(error: String) {
+                SnackBarHelper().makeDefaultSnack(toolbar, error, true)
+            }
+        })
+
+        permissionHelper.askForMicrophone(object : VoidCallback {
+            override fun onSuccess() {
+                sttHelper.start()
+            }
+
+            override fun onError(error: String?) {
+            }
+        })
+    }
     // endregion
 }

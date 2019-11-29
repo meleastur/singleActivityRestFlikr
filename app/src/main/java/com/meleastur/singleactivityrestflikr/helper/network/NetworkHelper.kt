@@ -5,12 +5,16 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import org.androidannotations.annotations.EBean
+import org.androidannotations.annotations.RootContext
 
 @EBean
 open class NetworkHelper {
 
+    @RootContext
+    lateinit var context: Context
+
     @Suppress("DEPRECATION")
-    fun isWiFiConnected(context: Context): Boolean {
+    fun isWiFiConnected(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.run {

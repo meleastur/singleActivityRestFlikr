@@ -46,4 +46,7 @@
     <string name="biometric_error_no_hardware_supported">No hay sensores biometrícos en el dispositivoe</string>
     <string name="biometric_error_no_hardware_available">Los sensores biometrícos no están disponibles en éste momento</string>
     <string name="biometric_error_no_auth_enrolled">No hay ningúna credencial biometríca enlazada aún</string>
+
+    <!--SpeechToText-->
+    <string name="speech_prompt">Di algo</string>
 </resources>

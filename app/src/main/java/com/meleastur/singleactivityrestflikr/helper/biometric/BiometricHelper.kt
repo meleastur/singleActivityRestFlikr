@@ -6,14 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
 import org.androidannotations.annotations.EBean
+import org.androidannotations.annotations.RootContext
 
 @EBean
 open class BiometricHelper {
 
+    @RootContext
+    lateinit var fragmentActivity: AppCompatActivity
+
+    private lateinit var callback: VoidCallback
     private var biometricPrompt: BiometricPrompt? = null
     private var title: String = ""
     private var subTitle: String = ""
@@ -21,8 +25,9 @@ open class BiometricHelper {
     private var cancelText: String? = null
     private var isConfirmRequired = false
 
-    fun tryAuthentication(fragmentActivity: AppCompatActivity, voidCallback: VoidCallback) {
-        if (!isBiometricSupported(fragmentActivity, voidCallback)) {
+    fun tryAuthentication(voidCallback: VoidCallback) {
+        this.callback = voidCallback
+        if (!isBiometricSupported()) {
             voidCallback.onError("Biometric method not supported in the device")
             return
         }
@@ -30,21 +35,19 @@ open class BiometricHelper {
         subTitle = fragmentActivity.getString(R.string.biometric_subtitle)
         description = fragmentActivity.getString(R.string.biometric_description)
         cancelText = fragmentActivity.getString(R.string.biometric_cancel)
-        instanceOfBiometricPrompt(fragmentActivity, voidCallback)
+        instanceOfBiometricPrompt()
         biometricPrompt?.authenticate(getPromptInfo())
     }
 
     fun tryAuthentication(
-        fragmentActivity: FragmentActivity,
         title: String,
         subTitle: String,
         description: String,
         cancelText: String?,
-        isConfirmRequired: Boolean,
-        voidCallback: VoidCallback
+        isConfirmRequired: Boolean
     ) {
-        if (!isBiometricSupported(fragmentActivity, voidCallback)) {
-            voidCallback.onError("Biometric method not supported in the device")
+        if (!isBiometricSupported()) {
+            callback.onError("Biometric method not supported in the device")
             return
         }
 
@@ -53,7 +56,7 @@ open class BiometricHelper {
         this.description = description
         this.cancelText = cancelText
         this.isConfirmRequired = isConfirmRequired
-        instanceOfBiometricPrompt(fragmentActivity, voidCallback)
+        instanceOfBiometricPrompt()
         biometricPrompt?.authenticate(getPromptInfo())
     }
 
@@ -74,13 +77,9 @@ open class BiometricHelper {
                 .setConfirmationRequired(isConfirmRequired)
                 .build()
         }
-
     }
 
-    private fun isBiometricSupported(
-        fragmentActivity: FragmentActivity,
-        voidCallback: VoidCallback
-    ): Boolean {
+    private fun isBiometricSupported(): Boolean {
         when (BiometricManager.from(fragmentActivity).canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 Log.d("BiometricHelper", "App can authenticate using biometrics.")
@@ -88,40 +87,40 @@ open class BiometricHelper {
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 Log.e("BiometricHelper", fragmentActivity.getString(R.string.biometric_error_no_hardware_supported))
-                voidCallback.onError(fragmentActivity.getString(R.string.biometric_error_no_hardware_supported))
+                callback.onError(fragmentActivity.getString(R.string.biometric_error_no_hardware_supported))
                 return false
             }
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
                 Log.e("BiometricHelper", fragmentActivity.getString(R.string.biometric_error_no_hardware_available))
-                voidCallback.onError(fragmentActivity.getString(R.string.biometric_error_no_hardware_available))
+                callback.onError(fragmentActivity.getString(R.string.biometric_error_no_hardware_available))
                 return false
             }
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Log.e("BiometricHelper", fragmentActivity.getString(R.string.biometric_error_no_auth_enrolled))
-                voidCallback.onError(fragmentActivity.getString(R.string.biometric_error_no_auth_enrolled))
+                callback.onError(fragmentActivity.getString(R.string.biometric_error_no_auth_enrolled))
                 return false
             }
             else -> return false
         }
     }
 
-    private fun instanceOfBiometricPrompt(fragmentActivity: FragmentActivity, voidCallback: VoidCallback) {
+    private fun instanceOfBiometricPrompt() {
         val executor = ContextCompat.getMainExecutor(fragmentActivity)
 
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
-                voidCallback.onError(errString.toString())
+                callback.onError(errString.toString())
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                voidCallback.onError(fragmentActivity.getString(R.string.biometric_error_unknown))
+                callback.onError(fragmentActivity.getString(R.string.biometric_error_unknown))
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                voidCallback.onSuccess()
+                callback.onSuccess()
             }
         }
         biometricPrompt = BiometricPrompt(fragmentActivity, executor, callback)

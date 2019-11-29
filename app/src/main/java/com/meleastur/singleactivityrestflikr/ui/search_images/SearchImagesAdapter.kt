@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
-import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
-import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import java.net.URL
 
@@ -70,7 +70,7 @@ class SearchImagesAdapter(
             listener.itemDetail(searchImage)
         }
 
-        if(positionAux == 0){
+        if (positionAux == 0) {
             positionAux = 1
         }
         listener.itemPositionChange(searchImage.page, searchImageList.size - 1, positionAux)

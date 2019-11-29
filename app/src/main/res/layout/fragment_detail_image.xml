@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/image_author_title"
                         android:layout_alignStart="@+id/image_author_title"
-                        android:layout_marginTop="@dimen/small"
+                        android:layout_marginTop="@dimen/x_small"
                         android:layout_marginEnd="@dimen/large"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textColor="@color/text_body2"
@@ -101,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/image_title_title"
                         android:layout_alignStart="@+id/image_author_title"
-                        android:layout_marginTop="@dimen/small"
+                        android:layout_marginTop="@dimen/x_small"
                         android:layout_marginEnd="@dimen/large"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textColor="@color/text_body2"
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/image_date_title"
                         android:layout_alignStart="@+id/image_author_title"
-                        android:layout_marginTop="@dimen/small"
+                        android:layout_marginTop="@dimen/x_small"
                         android:layout_marginEnd="@dimen/large"
                         android:layout_marginBottom="@dimen/medium"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -153,7 +153,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/image_description_title"
                         android:layout_alignStart="@+id/image_title_title"
-                        android:layout_marginTop="@dimen/small"
+                        android:layout_marginTop="@dimen/x_small"
                         android:layout_marginEnd="@dimen/large"
                         android:layout_marginBottom="@dimen/medium"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -202,7 +202,7 @@
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:orientation="horizontal"
-                android:padding="@dimen/small">
+                android:padding="@dimen/x_small">
 
                 <ImageView
                     android:layout_width="24dp"

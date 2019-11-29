@@ -2,8 +2,8 @@
 <resources>
     <dimen name="neg_xx_large">-32dp</dimen>
     <dimen name="neg_x_large">-28dp</dimen>
-    <dimen name="x_small">2dp</dimen>
-    <dimen name="small">4dp</dimen>
+    <dimen name="small">2dp</dimen>
+    <dimen name="x_small">4dp</dimen>
     <dimen name="medium">8dp</dimen>
     <dimen name="x_medium">12dp</dimen>
     <dimen name="large">16dp</dimen>

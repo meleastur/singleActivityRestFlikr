@@ -20,7 +20,7 @@ import kotlin.math.abs
 
 
 @EBean
-open class CameraPreLHelper : Camera.PreviewCallback, Camera.PictureCallback, SurfaceHolder.Callback,
+open class CameraHelper : Camera.PreviewCallback, Camera.PictureCallback, SurfaceHolder.Callback,
     View.OnClickListener {
 
     @RootContext

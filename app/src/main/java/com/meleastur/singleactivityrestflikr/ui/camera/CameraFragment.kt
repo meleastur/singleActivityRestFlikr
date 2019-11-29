@@ -16,13 +16,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
 import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
-import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
-import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
-import com.meleastur.singleactivityrestflikr.helper.camera.CameraXHelper
+import com.meleastur.singleactivityrestflikr.helper.camera.CameraHelper
 import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
 import org.androidannotations.annotations.*
@@ -40,7 +40,7 @@ open class CameraFragment : Fragment() {
     protected lateinit var imageHelper: ImageHelper
 
     @Bean
-    lateinit var cameraXHelper: CameraXHelper
+    lateinit var cameraHelper: CameraHelper
 
     @Bean
     lateinit var snackBarHelper: SnackBarHelper
@@ -217,7 +217,7 @@ open class CameraFragment : Fragment() {
 
 
         surfaceView.visibility = View.VISIBLE
-        cameraXHelper.startCamera(null, surfaceView, buttonCapture, takenCallback)
+        cameraHelper.startCamera(surfaceView, buttonCapture, takenCallback)
     }
 
     private fun showImageTaken(bitmap: Bitmap) {

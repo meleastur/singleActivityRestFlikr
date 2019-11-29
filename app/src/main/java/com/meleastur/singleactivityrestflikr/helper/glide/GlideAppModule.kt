@@ -1,4 +1,4 @@
-package com.meleastur.singleactivityrestflikr.common.glide
+package com.meleastur.singleactivityrestflikr.helper.glide
 
 import android.content.Context
 import android.util.Log.VERBOSE
@@ -12,7 +12,6 @@ import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import com.meleastur.singleactivityrestflikr.BuildConfig
 import com.meleastur.singleactivityrestflikr.R
-
 
 @GlideModule
 class GlideAppModule : AppGlideModule() {

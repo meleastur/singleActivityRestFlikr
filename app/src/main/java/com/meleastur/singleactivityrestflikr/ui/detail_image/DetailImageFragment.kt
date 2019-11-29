@@ -24,12 +24,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.common.callback.GenericCallback
 import com.meleastur.singleactivityrestflikr.common.callback.VoidCallback
-import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
-import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.di.component.DaggerFragmentComponent
 import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideApp
+import com.meleastur.singleactivityrestflikr.helper.glide.GlideAppModule
 import com.meleastur.singleactivityrestflikr.helper.network.NetworkHelper
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.ui.model.SearchImage

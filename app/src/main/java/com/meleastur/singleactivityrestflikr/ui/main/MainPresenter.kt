@@ -1,7 +1,6 @@
 package com.meleastur.singleactivityrestflikr.ui.main
 
-
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
 import io.reactivex.disposables.CompositeDisposable
 
 class MainPresenter : MainContract.Presenter {

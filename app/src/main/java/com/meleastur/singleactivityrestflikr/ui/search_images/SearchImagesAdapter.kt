@@ -16,11 +16,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.meleastur.singleactivityrestflikr.R
 import com.meleastur.singleactivityrestflikr.common.glide.GlideApp
 import com.meleastur.singleactivityrestflikr.common.glide.GlideAppModule
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
 import java.net.URL
 
 
-class SearchImagesAdapter(
+class SearchImagesAdapter internal constructor(
     private val context: Context,
     var searchImageList: ArrayList<SearchImage>, fragment: Fragment
 ) : RecyclerView.Adapter<SearchImagesAdapter.ListViewHolder>() {
@@ -30,9 +30,33 @@ class SearchImagesAdapter(
     private val height = 200
     private val width = 200
 
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private var searchImages = emptyList<SearchImage>() // Cached copy of words
+
     init {
         this.listener = fragment as ItemClickListener
         this.fragment = fragment
+    }
+
+    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var layout: RelativeLayout =
+            itemView.findViewById(R.id.item_parent)
+        val image: AppCompatImageView =
+            itemView.findViewById(R.id.image_thumbnail)
+        val title: TextView =
+            itemView.findViewById(R.id.image_title)
+        val author: TextView =
+            itemView.findViewById(R.id.image_author)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+        val itemView = inflater.inflate(R.layout.item_search_images, parent, false)
+        return ListViewHolder(itemView)
+    }
+
+    internal fun setSearchImages(words: List<SearchImage>) {
+        this.searchImages = words
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
@@ -80,18 +104,6 @@ class SearchImagesAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val itemView = LayoutInflater.from(context)
-            .inflate(
-                R.layout.item_search_images,
-                parent,
-                false
-            )
-        val holder = ListViewHolder(itemView)
-        holder.setIsRecyclable(false)
-        return holder
-    }
-
     override fun getItemCount(): Int {
         return searchImageList.size
     }
@@ -110,16 +122,7 @@ class SearchImagesAdapter(
             }.show()
     }
 
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var layout: RelativeLayout =
-            itemView.findViewById(R.id.item_parent)
-        val image: AppCompatImageView =
-            itemView.findViewById(R.id.image_thumbnail)
-        val title: TextView =
-            itemView.findViewById(R.id.image_title)
-        val author: TextView =
-            itemView.findViewById(R.id.image_author)
-    }
+   
 
     interface ItemClickListener {
         fun itemDetail(searchImage: SearchImage)

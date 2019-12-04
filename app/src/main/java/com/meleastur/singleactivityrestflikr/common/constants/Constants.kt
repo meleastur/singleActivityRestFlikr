@@ -3,6 +3,10 @@ package com.meleastur.singleactivityrestflikr.common.constants
 class Constants {
     companion object {
 
+        // Room
+        const val TABLE = "search_images"
+        const val DATABASE = "search_images_database"
+
         // Fragments Tags
         const val SEARCH_IMAGES = "SearchImagesFragment"
         const val DETAIL_IMAGE = "DetailImageFragment"

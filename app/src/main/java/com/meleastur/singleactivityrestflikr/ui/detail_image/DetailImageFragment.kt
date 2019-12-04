@@ -32,7 +32,7 @@ import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
 import com.meleastur.singleactivityrestflikr.helper.network.NetworkHelper
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
 import com.stfalcon.imageviewer.StfalconImageViewer
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
@@ -47,13 +47,7 @@ open class DetailImageFragment : Fragment() {
 
     private var listener: DetailImageFragmentInteractor? = null
 
-    // ==============================
-    // region FragmentArg
-    // ==============================
-    @FragmentArg
-    open lateinit var searchImage: SearchImage
-
-    // endRegion
+    lateinit var searchImage: SearchImage
 
     // ==============================
     // region Views
@@ -112,10 +106,9 @@ open class DetailImageFragment : Fragment() {
     // region Fragment
     // ==============================
 
-    fun newInstance(searchImage: SearchImage): DetailImageFragment {
+    fun newInstance(): DetailImageFragment {
         return DetailImageFragment_
             .builder()
-            .searchImage(searchImage)
             .build()
     }
 

@@ -30,13 +30,13 @@ import com.meleastur.singleactivityrestflikr.di.module.MainActivityModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
 import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
 import com.meleastur.singleactivityrestflikr.helper.speechToText.STTHelper
 import com.meleastur.singleactivityrestflikr.ui.base.FakeEvent
 import com.meleastur.singleactivityrestflikr.ui.camera.CameraFragment
 import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageEvent
 import com.meleastur.singleactivityrestflikr.ui.detail_image.DetailImageFragment
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import com.meleastur.singleactivityrestflikr.ui.search_images.SearchImagesFragment
 import org.androidannotations.annotations.*
 import org.greenrobot.eventbus.EventBus
@@ -345,7 +345,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
                 .hide(searchFragment!!)
                 .add(
                     R.id.frameLayout,
-                    DetailImageFragment().newInstance(searchImage), DETAIL_IMAGE
+                    DetailImageFragment().newInstance(), DETAIL_IMAGE
                 ).commit()
         }
 

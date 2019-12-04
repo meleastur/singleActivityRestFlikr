@@ -18,6 +18,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SearchView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.meleastur.singleactivityrestflikr.R
@@ -26,8 +28,9 @@ import com.meleastur.singleactivityrestflikr.di.module.FragmentModule
 import com.meleastur.singleactivityrestflikr.di.module.PreferencesModule
 import com.meleastur.singleactivityrestflikr.helper.network.NetworkHelper
 import com.meleastur.singleactivityrestflikr.helper.preferences.EncryptPreferencesHelper
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImageViewModel
 import com.meleastur.singleactivityrestflikr.ui.main.MainActivity
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
 import org.androidannotations.annotations.Bean
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EFragment
@@ -100,6 +103,8 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
     private var isNightModeOn: Boolean = false
     private var isBiometricLoginOn: Boolean = false
+
+    private lateinit var searchImageViewModel: SearchImageViewModel
     // endregion
 
     // ==============================
@@ -162,6 +167,17 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             presenter.searchImageByText(selectedText!!, networkHelper.isWiFiConnected())
         }
         isBiometricLoginOn = encrypEncryptPreferencesHelper.getIsBiometricLogin()
+
+        // Get a new or existing ViewModel from the ViewModelProvider.
+        searchImageViewModel = ViewModelProvider(this).get(SearchImageViewModel::class.java)
+
+        // Add an observer on the LiveData returned by getAlphabetizedWords.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        searchImageViewModel.allSearchImages.observe(this, Observer { searchImages ->
+            // Update the cached copy of the words in the adapter.
+            searchImages?.let { searchImageAdapter?.setSearchImages(it) }
+        })
     }
 
     override fun onDestroyView() {
@@ -288,6 +304,7 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     }
 
     override fun loadDataSuccess(searchImage: ArrayList<SearchImage>, isToAddMore: Boolean) {
+
         listener?.onUpdateSavedSearchImage(searchImage)
 
         if (!isToAddMore) {
@@ -305,11 +322,20 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
             recyclerView.layoutManager = linearLayout
             recyclerView.adapter = searchImageAdapter
 
+            searchImage.forEach {
+                searchImageViewModel.insert(it)
+            }
         } else {
+            searchImageViewModel.deleteAll()
+            searchImage.forEach {
+                searchImageViewModel.insert(it)
+            }
+
             actualPerPage = searchImage.size - 1
             searchImageAdapter?.searchImageList?.clear()
             searchImageAdapter?.searchImageList?.addAll(searchImage)
             searchImageAdapter?.notifyDataSetChanged()
+
         }
 
         showProgress(false)
@@ -377,8 +403,8 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
     // ==============================
     // region SearchView.OnQueryTextListener
     // ==============================
-
     private var selectedTextSavedList = ArrayList<String>()
+
     override fun onQueryTextSubmit(query: String?): Boolean {
 
         if (!TextUtils.isEmpty(query)) {
@@ -397,7 +423,6 @@ open class SearchImagesFragment : Fragment(), SearchImagesContract.View,
 
             return true
         }
-
         return false
     }
 

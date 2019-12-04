@@ -8,7 +8,7 @@ import com.meleastur.singleactivityrestflikr.api.flikr.model.photo_info.PhotoInf
 import com.meleastur.singleactivityrestflikr.api.flikr.model.search_images.Image
 import com.meleastur.singleactivityrestflikr.api.flikr.model.search_images.ImagesResponse
 import com.meleastur.singleactivityrestflikr.common.constants.Constants.Companion.API_KEY
-import com.meleastur.singleactivityrestflikr.ui.model.SearchImage
+import com.meleastur.singleactivityrestflikr.helper.room.SearchImage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -301,29 +301,20 @@ open class SearchImagesPresenter : SearchImagesContract.Presenter {
         page: Int,
         perPage: Int
     ) {
-        val searchImage = SearchImage()
-
+        var searchImage = SearchImage()
         if (!TextUtils.isEmpty(photoInfoResponse.photo.id)) {
-            searchImage.id = photoInfoResponse.photo.id
-
-            searchImage.author = photoInfoResponse.photo.owner.username
+            var author = photoInfoResponse.photo.owner.username
             if (!TextUtils.isEmpty(photoInfoResponse.photo.owner.realname)) {
-                searchImage.author =
-                    searchImage.author + " (" + photoInfoResponse.photo.owner.realname + ")"
+                author = author + " (" + photoInfoResponse.photo.owner.realname + ")"
             }
-            searchImage.date = photoInfoResponse.photo.dates.taken
-            searchImage.thumbnailURL = urlThumbnail
-            searchImage.fullImageURL = urlFullImage
-            searchImage.title = title
 
-            searchImage.description = photoInfoResponse.photo.description.content
-
-            searchImage.page = page
-            searchImage.perPage = perPage
+            searchImage = SearchImage(photoInfoResponse.photo.id,
+                urlThumbnail, urlFullImage, title, author,
+                photoInfoResponse.photo.dates.taken, photoInfoResponse.photo.description.content,
+                page.toString(), perPage.toString())
 
             searchImageList.add(searchImage)
         }
-
     }
 
 // endregion

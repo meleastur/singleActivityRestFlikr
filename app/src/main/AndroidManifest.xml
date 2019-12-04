@@ -34,8 +34,7 @@
         <activity
             android:name=".ui.splash.SplashActivity_"
             android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
-            android:noHistory="true"
-            android:screenOrientation="portrait">
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,8 +43,7 @@
         </activity>
         <activity
             android:name=".ui.main.MainActivity_"
-            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
-            android:screenOrientation="portrait">
+            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -53,7 +51,7 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.example.ExampleActivity" />
+                android:value=".ui.main.MainActivity_" />
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

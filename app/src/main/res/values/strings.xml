@@ -49,4 +49,7 @@
 
     <!--SpeechToText-->
     <string name="speech_prompt">Di algo</string>
+
+    <string name="lumix_media">Lux media: %1$s</string>
+
 </resources>

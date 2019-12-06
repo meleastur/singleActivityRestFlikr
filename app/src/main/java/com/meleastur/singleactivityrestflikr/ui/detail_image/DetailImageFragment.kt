@@ -247,7 +247,6 @@ open class DetailImageFragment : Fragment() {
     // ==============================
     @Click(R.id.image_thumbnail)
     fun clickThumbnailImage() {
-        listener?.onRequestOrientation(false)
         cardViewShare.visibility = View.GONE
         cardViewShare.post {
             openViewer(currentPosition)
@@ -280,7 +279,6 @@ open class DetailImageFragment : Fragment() {
             .withTransitionFrom(getTransitionTarget(startPosition))
             .withStartPosition(startPosition)
             .withDismissListener {
-                listener?.onRequestOrientation(true)
                 cardViewShare.visibility = View.VISIBLE
             }
             .withImageChangeListener {
@@ -387,8 +385,6 @@ open class DetailImageFragment : Fragment() {
 
     interface DetailImageFragmentInteractor {
         fun onDetailFragmentResume()
-
-        fun onRequestOrientation(isToPortrait: Boolean)
     }
     // endregion
 }

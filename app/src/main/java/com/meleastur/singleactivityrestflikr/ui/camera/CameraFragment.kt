@@ -1,15 +1,12 @@
 package com.meleastur.singleactivityrestflikr.ui.camera
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.SurfaceView
 import android.view.TextureView
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -26,12 +23,11 @@ import com.meleastur.singleactivityrestflikr.helper.file_explorer.ImageHelper
 import com.meleastur.singleactivityrestflikr.helper.permision.PermissionHelper
 import com.meleastur.singleactivityrestflikr.helper.snackBar.SnackBarHelper
 import org.androidannotations.annotations.*
+import java.io.File
 
 
 @EFragment(R.layout.fragment_camera)
 open class CameraFragment : Fragment() {
-
-    private var listener: CameraFragmentInteractor? = null
 
     @Bean
     lateinit var permissionHelper: PermissionHelper
@@ -48,11 +44,8 @@ open class CameraFragment : Fragment() {
     // ==============================
     // region Views
     // ==============================
-    @ViewById(R.id.view_finder)
+    @ViewById(R.id.textureView)
     protected lateinit var viewFinder: TextureView
-
-    @ViewById(R.id.surface_view)
-    protected lateinit var surfaceView: SurfaceView
 
     @ViewById(R.id.capture_button)
     protected lateinit var buttonCapture: ImageButton
@@ -62,12 +55,17 @@ open class CameraFragment : Fragment() {
 
     @ViewById(R.id.delete_button)
     protected lateinit var deleteButton: ImageButton
+
+    @ViewById(R.id.text_lumix_media)
+    protected lateinit var lumixTextView: TextView
+
     // endregion
+
 
     // ==============================
     // region vars
     // ==============================
-    private var takenBitmapUri: Uri? = null
+    private var takenFile: File? = null
     // endregion
 
     // ==============================
@@ -78,12 +76,6 @@ open class CameraFragment : Fragment() {
         return CameraFragment_
             .builder()
             .build()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        listener = context as CameraFragmentInteractor
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +92,7 @@ open class CameraFragment : Fragment() {
     }
 
     private fun initViews() {
-        if (takenBitmapUri == null) {
+        if (takenFile == null) {
             deleteButton.visibility = View.GONE
             imageViewTaken.visibility = View.GONE
         }
@@ -110,7 +102,6 @@ open class CameraFragment : Fragment() {
                 permissionHelper.askForWriteStorage(object : VoidCallback {
                     override fun onSuccess() {
                         //toolbar.isVisible = false
-                        listener?.onRequestOrientation(true)
                         startCamera()
                     }
 
@@ -134,31 +125,17 @@ open class CameraFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        surfaceView.visibility = View.GONE
+        viewFinder.visibility = View.GONE
+        cameraXHelper.stopCamera()
     }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     // endregion
-
 
     @Click(R.id.delete_button)
     fun deleteImageTaken() {
-        if (takenBitmapUri != null) {
-            imageHelper.deleteFileExternalStorage(takenBitmapUri!!,
-                object : VoidCallback {
-                    override fun onSuccess() {
-                        takenBitmapUri = null
-                        showSuccessDelete()
-                    }
-
-                    override fun onError(error: String?) {
-                        Log.e("deleteImageTaken", "error $error")
-                    }
-                })
+        if (takenFile != null) {
+            if (takenFile!!.exists() && takenFile!!.delete()) {
+                showSuccessDelete()
+            }
         }
     }
 
@@ -187,27 +164,19 @@ open class CameraFragment : Fragment() {
     // region métodos privados
     // ==============================
     private fun startCamera() {
-        val saveImageCallback = object : GenericCallback<Uri?> {
-            override fun onSuccess(successObject: Uri?) {
-                if (successObject != null) {
-                    takenBitmapUri = successObject
-                    snackBarHelper.makeDefaultSnack(imageViewTaken, "Guardada correctamente", true)
-                } else {
-                    Log.e("imageSharedSaver", "taken takenBitmapUri null")
-                }
+        val takenCallback = object : GenericCallback<File> {
+            override fun onSuccess(successObject: File) {
+                takenFile = successObject
+                showImageTaken(successObject)
             }
 
             override fun onError(error: String) {
-                Log.e("imageSharedSaver", "taken $error")
+                Log.e("cameraXHelper", "taken  $error")
             }
         }
-
-        val takenCallback = object : GenericCallback<Bitmap> {
-            override fun onSuccess(successObject: Bitmap) {
-                showImageTaken(successObject)
-
-                val fileName = "taken_" + System.currentTimeMillis() + ".png"
-                imageHelper.saveBitmapExternalStorage(fileName, successObject, saveImageCallback)
+        val lumixCallback = object : GenericCallback<String> {
+            override fun onSuccess(successObject: String) {
+                updateLumix(successObject)
             }
 
             override fun onError(error: String) {
@@ -215,33 +184,31 @@ open class CameraFragment : Fragment() {
             }
         }
 
-
-        surfaceView.visibility = View.VISIBLE
-        cameraXHelper.startCamera(null, surfaceView, buttonCapture, takenCallback)
+        viewFinder.visibility = View.VISIBLE
+        val fileName = "taken_" + System.currentTimeMillis() + ".png"
+        cameraXHelper.startCamera(viewFinder, buttonCapture, fileName, takenCallback, lumixCallback)
     }
 
-    private fun showImageTaken(bitmap: Bitmap) {
+    @UiThread
+    open fun updateLumix(lumix: String) {
+        if (::lumixTextView.isInitialized) {
+            lumixTextView.text = getString(R.string.lumix_media, lumix)
+        }
+    }
+
+
+    @UiThread
+    open fun showImageTaken(file: File) {
         imageViewTaken.visibility = View.VISIBLE
         deleteButton.post {
             deleteButton.visibility = View.VISIBLE
         }
 
         GlideApp.with(this)
-            .load(bitmap)
+            .load(file)
             .transition(DrawableTransitionOptions.withCrossFade())
             .apply { GlideAppModule.optionsGlide }
             .into(imageViewTaken)
-    }
-    // endregion
-
-    // ==============================
-    // region Inteactor
-    // ==============================
-
-    interface CameraFragmentInteractor {
-        //fun onCameraFragmentResume()
-
-        fun onRequestOrientation(isToPortrait: Boolean)
     }
     // endregion
 }

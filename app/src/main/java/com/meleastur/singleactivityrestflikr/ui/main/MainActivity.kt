@@ -3,7 +3,6 @@ package com.meleastur.singleactivityrestflikr.ui.main
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -50,8 +49,7 @@ import javax.inject.Inject
 open class MainActivity : AppCompatActivity(), MainContract.View,
     LifecycleOwner,
     SearchImagesFragment.SearchImagesInterector,
-    DetailImageFragment.DetailImageFragmentInteractor,
-    CameraFragment.CameraFragmentInteractor {
+    DetailImageFragment.DetailImageFragmentInteractor {
 
     @Inject
     lateinit var presenter: MainContract.Presenter
@@ -81,6 +79,9 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
 
     @ViewById(R.id.fab_open_camera)
     protected lateinit var fabOpenCamera: FloatingActionButton
+
+    @ViewById(R.id.fab_star_speech)
+    protected lateinit var fabStartSpeech: FloatingActionButton
 
     @OptionsMenuItem(R.id.action_search)
     lateinit var actionSearch: MenuItem
@@ -150,9 +151,18 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         val cameraFragment = supportFragmentManager.findFragmentByTag(CAMERA)
 
         fabOpenCamera.visibility = View.VISIBLE
+        fabStartSpeech.visibility = View.VISIBLE
         toolbar.isVisible = true
 
         if (cameraFragment != null && searchFragment != null) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            if (TextUtils.isEmpty(lastSearchTitle)) {
+                supportActionBar?.title =
+                    getString(R.string.search_image_frag_title)
+            } else {
+                supportActionBar?.title = lastSearchTitle
+            }
+
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     R.animator.fade_in,
@@ -194,6 +204,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
             super.onBackPressed()
         }
     }
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -242,9 +253,10 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // ==============================
     @Click(R.id.fab_open_camera)
     fun onClickFabCamera() {
+
         openCameraFragment()
-        toolbar.isVisible = false
         fabOpenCamera.visibility = View.GONE
+        fabStartSpeech.visibility = View.GONE
     }
 
     @Click(R.id.fab_star_speech)
@@ -302,7 +314,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
         val detailFragment = supportFragmentManager.findFragmentByTag(DETAIL_IMAGE)
 
         fabOpenCamera.visibility = View.GONE
-
+        fabStartSpeech.visibility = View.GONE
         toolbar.isVisible = true
         changeToolbarScroll(false)
         appBarLayout.setExpanded(
@@ -398,22 +410,11 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // ==============================
     // region DetailFragment.Interactor
     // ==============================
-
-    override fun onRequestOrientation(isToPortrait: Boolean) {
-        requestedOrientation = if (isToPortrait) {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_USER
-        }
-    }
-
-
     override fun onDetailFragmentResume() {
         if (actualImage != null) {
             EventBus.getDefault().post(DetailImageEvent(actualImage!!))
         }
     }
-
     // endregion
 
     // ==============================
@@ -444,6 +445,7 @@ open class MainActivity : AppCompatActivity(), MainContract.View,
     // ==============================
     private fun openCameraFragment() {
         val searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_IMAGES)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (searchFragment != null) {
             supportFragmentManager.beginTransaction()

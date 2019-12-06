@@ -92,6 +92,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    //Camera X avoid Exception from call site #2 bootstrap method
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -149,8 +155,8 @@ dependencies {
     //  implementation "androidx.security:security-crypto:$security_version"
 
     // cameraX
-    //  implementation "androidx.camera:camera-core:${camerax_version}"
-    //  implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
 
     // Room components
     implementation "androidx.room:room-runtime:$roomVersion"
